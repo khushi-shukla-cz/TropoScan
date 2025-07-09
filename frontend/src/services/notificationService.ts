@@ -46,9 +46,17 @@ class NotificationService {
   private settings: NotificationSettings;
 
   constructor() {
+    console.log('🔔 Initializing NotificationService...');
+    console.log('📋 Browser supports notifications:', 'Notification' in window);
+    console.log('📋 Browser supports service workers:', 'serviceWorker' in navigator);
+    
     this.checkPermission();
     this.initializeServiceWorker();
     this.loadSettings();
+    
+    console.log('✅ NotificationService initialized');
+    console.log('📋 Current permission:', this.permission);
+    console.log('📋 Current settings:', this.settings);
   }
 
   private loadSettings() {
@@ -75,11 +83,17 @@ class NotificationService {
   private async initializeServiceWorker() {
     if ('serviceWorker' in navigator) {
       try {
-        this.serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service Worker registered successfully');
+        console.log('⚙️ Registering service worker...');
+        // Use the correct path for Vite dev server
+        const swPath = import.meta.env.DEV ? '/sw.js' : '/sw.js';
+        this.serviceWorkerRegistration = await navigator.serviceWorker.register(swPath);
+        console.log('✅ Service Worker registered successfully:', this.serviceWorkerRegistration);
       } catch (error) {
-        console.warn('Service Worker registration failed:', error);
+        console.warn('❌ Service Worker registration failed:', error);
+        console.log('🔄 Continuing without Service Worker - regular notifications will still work');
       }
+    } else {
+      console.warn('❌ Service Worker not supported in this browser');
     }
   }
 
@@ -91,36 +105,66 @@ class NotificationService {
 
   async requestPermission(): Promise<boolean> {
     if (!('Notification' in window)) {
-      console.warn('This browser does not support notifications');
+      console.warn('❌ This browser does not support notifications');
       return false;
     }
 
+    console.log('🔔 Current notification permission:', this.permission);
+
     if (this.permission === 'granted') {
+      console.log('✅ Notification permission already granted');
       return true;
     }
 
-    if (this.permission !== 'denied') {
+    if (this.permission === 'denied') {
+      console.warn('❌ Notification permission was denied. Please enable in browser settings.');
+      return false;
+    }
+
+    try {
+      console.log('📝 Requesting notification permission...');
       const permission = await Notification.requestPermission();
       this.permission = permission;
       
-      // Also request persistent notification permission
-      if (permission === 'granted' && this.serviceWorkerRegistration) {
-        console.log('✅ Notifications enabled - including background notifications');
-      }
+      console.log('📋 Permission result:', permission);
       
-      return permission === 'granted';
+      if (permission === 'granted') {
+        console.log('✅ Notifications enabled - including background notifications');
+        
+        // Send a test notification to confirm it works (with a slight delay)
+        setTimeout(() => {
+          console.log('🧪 Sending welcome test notification...');
+          this.sendNotification({
+            title: '🎉 Notifications Enabled - TropoScan',
+            body: 'You will now receive risk alerts for tropical storm detection. This is a test notification.',
+            requireInteraction: false,
+            vibrate: [200, 100, 200],
+            tag: 'troposcam-welcome-test'
+          });
+        }, 1000);
+        
+        return true;
+      } else {
+        console.warn('❌ Notification permission denied by user');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error requesting notification permission:', error);
+      return false;
     }
-
-    return false;
   }
 
   async sendNotification(options: NotificationOptions): Promise<void> {
+    console.log('🔔 Attempting to send notification:', options.title);
+    
     const hasPermission = await this.requestPermission();
     
     if (!hasPermission) {
-      console.warn('Notification permission denied');
+      console.warn('❌ Notification permission denied - cannot send notification');
       return;
     }
+
+    console.log('✅ Permission granted, sending notification...');
 
     // Enhanced notification with vibration and sound
     const notificationOptions = {
@@ -146,37 +190,66 @@ class NotificationService {
       silent: !this.settings.soundEnabled
     };
 
-    // Use Service Worker for persistent notifications if available
-    if (this.serviceWorkerRegistration && this.settings.backgroundNotifications) {
-      try {
+    console.log('📋 Notification options:', notificationOptions);
+
+    // Try service worker notification first, then fallback to regular notification
+    try {
+      if (this.serviceWorkerRegistration && this.settings.backgroundNotifications) {
+        console.log('📱 Sending persistent notification via Service Worker...');
         await this.serviceWorkerRegistration.showNotification(options.title, notificationOptions);
-        console.log('📱 Persistent notification sent');
-      } catch (error) {
-        console.warn('Failed to show persistent notification:', error);
-        // Fallback to regular notification
+        console.log('✅ Persistent notification sent successfully');
+      } else {
+        console.log('📱 Sending regular notification...');
         this.showRegularNotification(options.title, notificationOptions);
+        console.log('✅ Regular notification sent successfully');
       }
-    } else {
+    } catch (error) {
+      console.error('❌ Failed to show notification:', error);
+      // Fallback to regular notification
+      console.log('🔄 Falling back to regular notification...');
       this.showRegularNotification(options.title, notificationOptions);
     }
   }
 
   private showRegularNotification(title: string, options: any) {
-    const notification = new Notification(title, options);
+    try {
+      console.log('📱 Creating regular notification:', title);
+      const notification = new Notification(title, options);
 
-    // Auto-close after 10 seconds unless requireInteraction is true
-    if (!options.requireInteraction) {
-      setTimeout(() => notification.close(), 10000);
+      console.log('✅ Regular notification created successfully');
+
+      // Auto-close after 10 seconds unless requireInteraction is true
+      if (!options.requireInteraction) {
+        setTimeout(() => {
+          notification.close();
+          console.log('🔄 Auto-closed notification after 10 seconds');
+        }, 10000);
+      }
+
+      // Handle notification clicks
+      notification.onclick = () => {
+        console.log('👆 Notification clicked');
+        window.focus();
+        notification.close();
+      };
+
+      // Handle notification errors
+      notification.onerror = (error) => {
+        console.error('❌ Notification error:', error);
+      };
+
+      notification.onshow = () => {
+        console.log('✅ Notification displayed successfully');
+      };
+
+    } catch (error) {
+      console.error('❌ Failed to create regular notification:', error);
     }
-
-    // Handle notification clicks
-    notification.onclick = () => {
-      window.focus();
-      notification.close();
-    };
   }
 
   sendRiskAlert(riskLevel: 'low' | 'moderate' | 'high', details: string): void {
+    console.log(`🚨 Sending risk alert: ${riskLevel.toUpperCase()}`);
+    
     // Check if this risk level is enabled
     const riskSettings = {
       low: this.settings.lowRisk,
@@ -185,9 +258,11 @@ class NotificationService {
     };
 
     if (!riskSettings[riskLevel]) {
-      console.log(`Notification for ${riskLevel} risk is disabled`);
+      console.log(`❌ Notification for ${riskLevel} risk is disabled in settings`);
       return;
     }
+
+    console.log(`✅ ${riskLevel} risk notifications are enabled`);
 
     const alertConfigs = {
       high: {
@@ -214,6 +289,8 @@ class NotificationService {
     };
 
     const config = alertConfigs[riskLevel];
+    console.log(`📋 Sending ${riskLevel} risk notification:`, config.title);
+    
     this.sendNotification({
       ...config,
       tag: `troposcam-${riskLevel}-risk-${Date.now()}`,
@@ -246,8 +323,61 @@ class NotificationService {
 
   // Send test notification
   sendTestNotification(riskLevel: 'low' | 'moderate' | 'high' = 'moderate') {
+    console.log('🧪 Sending test notification...');
     const testDetails = "This is a test notification to verify your alert settings are working correctly.";
     this.sendRiskAlert(riskLevel, testDetails);
+  }
+
+  // Send immediate desktop notification (bypasses all settings for testing)
+  async sendImmediateTestNotification(): Promise<boolean> {
+    console.log('🚀 Sending immediate test notification...');
+    
+    // Force permission request if needed
+    if (Notification.permission !== 'granted') {
+      console.log('📝 Requesting permission...');
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        console.error('❌ Permission denied');
+        return false;
+      }
+    }
+
+    try {
+      console.log('✅ Creating desktop notification...');
+      const notification = new Notification('🎉 Test Notification - TropoScan', {
+        body: '🔔 This is a test desktop notification! If you can see this popup, notifications are working correctly.',
+        icon: '/favicon.ico',
+        badge: '/favicon.ico',
+        tag: 'test-notification',
+        requireInteraction: false,
+        silent: false
+      });
+
+      notification.onshow = () => {
+        console.log('✅ Desktop notification displayed successfully!');
+      };
+
+      notification.onclick = () => {
+        console.log('👆 Notification clicked');
+        window.focus();
+        notification.close();
+      };
+
+      notification.onerror = (error) => {
+        console.error('❌ Notification error:', error);
+      };
+
+      // Auto close after 5 seconds
+      setTimeout(() => {
+        notification.close();
+        console.log('🔄 Test notification auto-closed');
+      }, 5000);
+
+      return true;
+    } catch (error) {
+      console.error('❌ Failed to create test notification:', error);
+      return false;
+    }
   }
 
   // Check if notifications are properly configured

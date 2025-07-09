@@ -116,9 +116,16 @@ const DetectionInterface = () => {
   };
 
   const sendRiskNotification = (riskData: DetectionResult['risk_data']) => {
-    if (!notificationsEnabled) return;
+    console.log('🔔 sendRiskNotification called with:', riskData);
+    console.log('📱 Notifications enabled:', notificationsEnabled);
+    
+    if (!notificationsEnabled) {
+      console.log('❌ Notifications disabled - skipping alert');
+      return;
+    }
 
     const details = `Temperature: ${riskData.temperature}, Confidence: ${riskData.confidence}%`;
+    console.log('📋 Sending risk alert with details:', details);
     notificationService.sendRiskAlert(riskData.risk_level, details);
   };
 
@@ -301,17 +308,39 @@ const DetectionInterface = () => {
               Upload INSAT-3D infrared satellite images or try our sample images to detect tropical cloud clusters
             </p>
           </div>
-          <Button
-            onClick={enableNotifications}
-            variant={notificationsEnabled ? "default" : "outline"}
-          >
-            {notificationsEnabled ? (
-              <BellRing className="mr-2 h-4 w-4" />
-            ) : (
-              <Bell className="mr-2 h-4 w-4" />
+          <div className="flex space-x-2">
+            <Button
+              onClick={enableNotifications}
+              variant={notificationsEnabled ? "default" : "outline"}
+            >
+              {notificationsEnabled ? (
+                <BellRing className="mr-2 h-4 w-4" />
+              ) : (
+                <Bell className="mr-2 h-4 w-4" />
+              )}
+              {notificationsEnabled ? "Notifications On" : "Enable Alerts"}
+            </Button>
+            
+            {notificationsEnabled && (
+              <Button
+                onClick={async () => {
+                  console.log('🧪 Testing immediate desktop notification...');
+                  const success = await notificationService.sendImmediateTestNotification();
+                  if (!success) {
+                    toast({
+                      title: "Notification Test Failed",
+                      description: "Check browser settings and console for details",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+                variant="outline"
+                size="sm"
+              >
+                Test Alert
+              </Button>
             )}
-            {notificationsEnabled ? "Notifications On" : "Enable Alerts"}
-          </Button>
+          </div>
         </div>
       </div>
 
