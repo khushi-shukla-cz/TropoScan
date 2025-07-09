@@ -4,16 +4,10 @@ import {
   Home,
   Utensils,
   Heart,
-  Zap,
-  Car,
-  Phone,
   AlertTriangle,
   CheckCircle,
   Clock,
-  Users,
-  Droplets,
   Battery,
-  Radio,
   Package,
   FileText,
   MapPin,
@@ -22,8 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
 import EmergencyNavbar from "@/components/EmergencyNavbar";
+import { Link, useNavigate } from "react-router-dom";
 
 const DisasterPreparedness = () => {
   const [checkedItems, setCheckedItems] = useState({});
@@ -166,69 +160,40 @@ const DisasterPreparedness = () => {
     return Math.round((checkedCount / categoryItems.length) * 100);
   };
 
-  const getTotalCompletion = () => {
-    const totalItems = emergencyKitItems.reduce(
-      (sum, kit) => sum + kit.items.length,
-      0
-    );
-    const checkedCount = Object.values(checkedItems).filter(Boolean).length;
-    return Math.round((checkedCount / totalItems) * 100);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950">
       <EmergencyNavbar currentPage="preparedness" />
-
-      {/* Page Header */}
-      <div className="bg-green-600/20 border-b border-green-500/30 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-green-400" />
-              <div>
-                <h1 className="text-3xl font-bold text-white">
-                  Disaster Preparedness
-                </h1>
-                <p className="text-gray-300">
-                  Essential survival guides and preparation checklists
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="text-right">
-                <div className="text-white font-bold text-lg">
-                  {getTotalCompletion()}% Complete
-                </div>
-                <div className="text-gray-300 text-sm">
-                  Emergency Kit Preparation
-                </div>
-              </div>
-            </div>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center space-x-3">
+            <Shield className="w-8 h-8 text-green-400" />
+            <h1 className="text-3xl font-bold text-white">
+              Disaster Preparedness
+            </h1>
           </div>
+
+          <Link
+            to="/emergency"
+            className="bg-blue-800 text-white px-4 py-2 rounded shadow hover:bg-blue-900 transition"
+          >
+            🆘 Go to Emergency Page
+          </Link>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Main Content Tabs */}
         <Tabs defaultValue="emergency-kit" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger
-              value="emergency-kit"
-              className="flex items-center space-x-2"
-            >
-              <Package className="w-4 h-4" />
-              <span>Emergency Kit</span>
+            <TabsTrigger value="emergency-kit">
+              <Package className="w-4 h-4 mr-2" />
+              Emergency Kit
             </TabsTrigger>
-            <TabsTrigger
-              value="evacuation-plan"
-              className="flex items-center space-x-2"
-            >
-              <MapPin className="w-4 h-4" />
-              <span>Action Plan</span>
+            <TabsTrigger value="evacuation-plan">
+              <MapPin className="w-4 h-4 mr-2" />
+              Action Plan
             </TabsTrigger>
           </TabsList>
 
-          {/* Emergency Kit Tab */}
           <TabsContent value="emergency-kit" className="space-y-6">
             <Card className="border-blue-500/30 bg-blue-950/20">
               <CardHeader>
@@ -314,74 +279,56 @@ const DisasterPreparedness = () => {
             </Card>
           </TabsContent>
 
-          {/* Evacuation Plan Tab */}
           <TabsContent value="evacuation-plan" className="space-y-6">
             <div className="grid lg:grid-cols-3 gap-6">
-              {/* Before Cyclone */}
-              <Card className="border-yellow-500/30 bg-yellow-950/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-yellow-400">
-                    <AlertTriangle className="w-5 h-5 mr-2" />
-                    Before Cyclone
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {evacuationPlan.beforeCyclone.map((action, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <div className="w-6 h-6 bg-yellow-600 text-white text-xs rounded-full flex items-center justify-center font-bold mt-0.5">
-                          {index + 1}
+              {[
+                {
+                  title: "Before Cyclone",
+                  color: "yellow",
+                  icon: <AlertTriangle className="w-5 h-5 mr-2" />,
+                  actions: evacuationPlan.beforeCyclone,
+                },
+                {
+                  title: "During Cyclone",
+                  color: "red",
+                  icon: <Shield className="w-5 h-5 mr-2" />,
+                  actions: evacuationPlan.duringCyclone,
+                },
+                {
+                  title: "After Cyclone",
+                  color: "green",
+                  icon: <CheckCircle className="w-5 h-5 mr-2" />,
+                  actions: evacuationPlan.afterCyclone,
+                },
+              ].map((section, i) => (
+                <Card
+                  key={i}
+                  className={`border-${section.color}-500/30 bg-${section.color}-950/20`}
+                >
+                  <CardHeader>
+                    <CardTitle
+                      className={`flex items-center text-${section.color}-400`}
+                    >
+                      {section.icon}
+                      {section.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {section.actions.map((action, index) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <div
+                            className={`w-6 h-6 bg-${section.color}-600 text-white text-xs rounded-full flex items-center justify-center font-bold mt-0.5`}
+                          >
+                            {index + 1}
+                          </div>
+                          <p className="text-gray-300 text-sm">{action}</p>
                         </div>
-                        <p className="text-gray-300 text-sm">{action}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* During Cyclone */}
-              <Card className="border-red-500/30 bg-red-950/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-red-400">
-                    <Shield className="w-5 h-5 mr-2" />
-                    During Cyclone
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {evacuationPlan.duringCyclone.map((action, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <div className="w-6 h-6 bg-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold mt-0.5">
-                          {index + 1}
-                        </div>
-                        <p className="text-gray-300 text-sm">{action}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* After Cyclone */}
-              <Card className="border-green-500/30 bg-green-950/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center text-green-400">
-                    <CheckCircle className="w-5 h-5 mr-2" />
-                    After Cyclone
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {evacuationPlan.afterCyclone.map((action, index) => (
-                      <div key={index} className="flex items-start space-x-2">
-                        <div className="w-6 h-6 bg-green-600 text-white text-xs rounded-full flex items-center justify-center font-bold mt-0.5">
-                          {index + 1}
-                        </div>
-                        <p className="text-gray-300 text-sm">{action}</p>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </TabsContent>
         </Tabs>

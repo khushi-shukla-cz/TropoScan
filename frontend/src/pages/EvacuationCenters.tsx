@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import EmergencyMap from "@/assets/EmergencyMap";
 import EmergencyNavbar from "@/components/EmergencyNavbar";
+import { Link } from "react-router-dom";
 
 const EvacuationCenters = () => {
   const [selectedCenter, setSelectedCenter] = useState(null);
@@ -112,6 +113,25 @@ const EvacuationCenters = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950">
       {/* Fixed Emergency Navigation */}
       <EmergencyNavbar currentPage="evacuation" />
+
+      {/* Page Title */}
+      <div className="container mx-auto px-4 mt-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-white flex items-center space-x-2">
+            <span role="img" aria-label="loc">
+              📍
+            </span>
+            <span>Evacuation Center</span>
+          </h1>
+
+          <Link
+            to="/emergency"
+            className="bg-blue-800 text-white px-4 py-2 rounded shadow hover:bg-blue-900 transition"
+          >
+            🆘 Go to Emergency Page
+          </Link>
+        </div>
+      </div>
 
       <div className="container mx-auto px-4 py-8">
         {/* Emergency Map */}

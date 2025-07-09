@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import EmergencyNavbar from "@/components/EmergencyNavbar";
+import { Link } from "react-router-dom";
 
 const EmergencyContacts = () => {
   const [copiedNumber, setCopiedNumber] = useState(null);
@@ -169,10 +170,21 @@ const EmergencyContacts = () => {
 
         {/* National Emergency Services */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
-            <Shield className="w-6 h-6 mr-2 text-blue-400" />
-            National Emergency Services
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-white flex items-center">
+              <span role="img" aria-label="help">
+                📞
+              </span>
+              National Emergency Services
+            </h2>
+            <Link
+              to="/emergency"
+              className="bg-blue-800 text-white px-4 py-2 rounded shadow hover:bg-blue-900 transition"
+            >
+              🆘 Go to Emergency Page
+            </Link>
+          </div>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {emergencyContacts.map((contact, index) => (
               <Card
