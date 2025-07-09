@@ -33,7 +33,7 @@ const EmergencyNavbar: React.FC<EmergencyNavbarProps> = ({ currentPage = "emerge
         navigate('/?tab=detection');
         break;
       case "simulator":
-        navigate('/?tab=simulator');
+        navigate('/CycloneSimulator');
         break;
       case "cases":
         navigate('/?tab=cases');
@@ -59,16 +59,16 @@ const EmergencyNavbar: React.FC<EmergencyNavbarProps> = ({ currentPage = "emerge
     
     if (path === '/trending') return "trends";
     if (path === '/notifications') return "alerts";
+    if (path === '/CycloneSimulator') return "simulator";
     if (path === '/emergency' || currentPage === "emergency" || currentPage === "overview") return "emergency";
     if (currentPage === "contacts") return "emergency";
     if (currentPage === "evacuation") return "emergency";
     if (currentPage === "preparedness") return "emergency";
     if (path === '/' && tab === 'detection') return "detection";
-    if (path === '/' && tab === 'simulator') return "simulator";
     if (path === '/' && tab === 'cases') return "cases";
     if (path === '/') return "home";
     
-    return "emergency";
+    return "home";
   };
 
   const activeTab = getActiveTab();
@@ -125,18 +125,6 @@ const EmergencyNavbar: React.FC<EmergencyNavbarProps> = ({ currentPage = "emerge
               </button>
               
               <button
-                onClick={() => handleNavigation("simulator")}
-                className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
-                  activeTab === "simulator" 
-                    ? "bg-blue-600 text-white shadow-lg animate-scale-in" 
-                    : "text-gray-300 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                <Activity className="h-4 w-4" />
-                <span>Simulator</span>
-              </button>
-              
-              <button
                 onClick={() => handleNavigation("cases")}
                 className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
                   activeTab === "cases" 
@@ -161,8 +149,24 @@ const EmergencyNavbar: React.FC<EmergencyNavbarProps> = ({ currentPage = "emerge
               </button>
               
               <button
+                onClick={() => handleNavigation("simulator")}
+                className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                  activeTab === "simulator" 
+                    ? "bg-blue-600 text-white shadow-lg animate-scale-in" 
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Activity className="h-4 w-4" />
+                <span>Simulator</span>
+              </button>
+              
+              <button
                 onClick={() => handleNavigation("trends")}
-                className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+                className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                  activeTab === "trends" 
+                    ? "bg-blue-600 text-white shadow-lg animate-scale-in" 
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
               >
                 <TrendingUp className="h-4 w-4" />
                 <span>Trends</span>
@@ -170,7 +174,11 @@ const EmergencyNavbar: React.FC<EmergencyNavbarProps> = ({ currentPage = "emerge
               
               <button
                 onClick={() => handleNavigation("alerts")}
-                className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+                className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                  activeTab === "alerts" 
+                    ? "bg-blue-600 text-white shadow-lg animate-scale-in" 
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
               >
                 <Bell className="h-4 w-4" />
                 <span>Alerts</span>

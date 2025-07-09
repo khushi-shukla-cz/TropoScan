@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Cloud, Satellite, AlertTriangle, TrendingUp, Eye, Download, MapPin, Clock, Thermometer, Sun, Moon, Activity, Zap, Bell, FileText, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,17 @@ const Index = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Sync activeTab with URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && ['home', 'detection', 'cases'].includes(tab)) {
+      setActiveTab(tab);
+    } else {
+      setActiveTab('home');
+    }
+  }, [location.search]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 transition-all duration-500">
@@ -46,38 +57,55 @@ const Index = () => {
                 )}
               </Button>
               <div className="flex space-x-2">
-                {["home", "detection", "cases", "emergency"].map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => {
-                      if (tab === "emergency") {
-                        navigate("/emergency");
-                      } else {
-                        setActiveTab(tab);
-                      }
-                    }}
-                    className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
-                      activeTab === tab
-                        ? "bg-blue-600 text-white shadow-lg animate-scale-in"
-                        : "text-gray-300 hover:text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {tab === "home" && <Cloud className="h-4 w-4" />}
-                    {tab === "detection" && <Eye className="h-4 w-4" />}
-                    {tab === "cases" && <FileText className="h-4 w-4" />}
-                    {tab === "emergency" && (
-                      <AlertTriangle className="h-4 w-4" />
-                    )}
-                    <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
-                  </button>
-                ))}
+                <button
+                  onClick={() => setActiveTab("home")}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                    activeTab === "home"
+                      ? "bg-blue-600 text-white shadow-lg animate-scale-in"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Cloud className="h-4 w-4" />
+                  <span>Home</span>
+                </button>
+                
+                <button
+                  onClick={() => setActiveTab("detection")}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                    activeTab === "detection"
+                      ? "bg-blue-600 text-white shadow-lg animate-scale-in"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Eye className="h-4 w-4" />
+                  <span>Detection</span>
+                </button>
+                
+                <button
+                  onClick={() => setActiveTab("cases")}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                    activeTab === "cases"
+                      ? "bg-blue-600 text-white shadow-lg animate-scale-in"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <FileText className="h-4 w-4" />
+                  <span>Cases</span>
+                </button>
+                
+                <button
+                  onClick={() => navigate("/emergency")}
+                  className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Emergency</span>
+                </button>
 
-                {/* Simulator Tab - Route Navigation */}
                 <button
                   onClick={() => navigate("/CycloneSimulator")}
                   className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
                     location.pathname === "/CycloneSimulator"
-                      ? "bg-blue-600 text-white shadow-lg"
+                      ? "bg-blue-600 text-white shadow-lg animate-scale-in"
                       : "text-gray-300 hover:text-white hover:bg-white/10"
                   }`}
                 >

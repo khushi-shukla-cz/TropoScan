@@ -691,9 +691,9 @@ const CycloneSimulator: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       <EmergencyNavbar currentPage="simulator" />
-      <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto max-w-6xl p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">

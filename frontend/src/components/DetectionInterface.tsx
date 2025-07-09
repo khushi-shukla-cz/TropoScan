@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Upload, Play, Download, AlertTriangle, CheckCircle, Loader2, Bell, BellRing } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Upload, Play, Download, AlertTriangle, CheckCircle, Loader2, Bell, BellRing, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +35,12 @@ interface SampleImage {
 const DetectionInterface = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingImageId, setProcessingImageId] = useState<string | null>(null);
   const [results, setResults] = useState<DetectionResult | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [sampleImages, setSampleImages] = useState<SampleImage[]>([]);
   const [loadingSamples, setLoadingSamples] = useState(true);
+  const [showSampleDropdown, setShowSampleDropdown] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -192,6 +194,7 @@ const DetectionInterface = () => {
 
   const processSampleImage = async (sampleId: string) => {
     setIsProcessing(true);
+    setProcessingImageId(sampleId);
     setUploadedImage(null);
     
     try {
@@ -229,6 +232,7 @@ const DetectionInterface = () => {
       });
     } finally {
       setIsProcessing(false);
+      setProcessingImageId(null);
     }
   };
 
@@ -366,7 +370,7 @@ const DetectionInterface = () => {
             </CardContent>
           </Card>
 
-          {/* Sample Images */}
+          {/* Sample Images Dropdown */}
           <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500 transform hover:scale-[1.02] hover:shadow-xl">
             <CardHeader>
               <CardTitle className="text-white animate-fade-in flex items-center justify-between">
@@ -380,30 +384,46 @@ const DetectionInterface = () => {
               </p>
             </CardHeader>
             <CardContent className="space-y-3">
-              {loadingSamples ? (
-                <div className="text-center py-4">
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-blue-400" />
-                  <p className="text-gray-400 text-sm">Loading sample images...</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-3">
-                  {sampleImages.map((sample, index) => (
-                    <SampleImageCard
-                      key={sample.id}
-                      sample={sample}
-                      index={index}
-                      onSelect={processSampleImage}
-                      onLoadPreview={loadSamplePreview}
-                      isProcessing={isProcessing}
-                    />
-                  ))}
-                </div>
-              )}
-              
-              {!loadingSamples && sampleImages.length === 0 && (
-                <div className="text-center py-4">
-                  <AlertTriangle className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
-                  <p className="text-gray-400 text-sm">No sample images available</p>
+              {/* Dropdown Toggle Button */}
+              <Button
+                variant="outline"
+                onClick={() => setShowSampleDropdown(!showSampleDropdown)}
+                className="w-full flex items-center justify-between bg-white/5 border-white/20 hover:bg-white/10 text-white"
+                disabled={loadingSamples}
+              >
+                <span className="flex items-center">
+                  <Upload className="h-4 w-4 mr-2" />
+                  {loadingSamples ? "Loading sample images..." : `Browse Sample Images (${sampleImages.length} available)`}
+                </span>
+                {loadingSamples ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  showSampleDropdown ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+
+              {/* Dropdown Content */}
+              {showSampleDropdown && !loadingSamples && (
+                <div className="mt-4 p-4 bg-black/20 rounded-lg border border-white/10 animate-fade-in">
+                  {sampleImages.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {sampleImages.map((sample, index) => (
+                        <SampleImageGridCard
+                          key={sample.id}
+                          sample={sample}
+                          index={index}
+                          onSelect={processSampleImage}
+                          onLoadPreview={loadSamplePreview}
+                          isProcessing={processingImageId === sample.id}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <AlertTriangle className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
+                      <p className="text-gray-400 text-sm">No sample images available</p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -542,8 +562,8 @@ const DetectionInterface = () => {
   );
 };
 
-// Sample Image Card Component with Preview
-const SampleImageCard = ({ sample, index, onSelect, onLoadPreview, isProcessing }: {
+// Sample Image Grid Card Component for Dropdown
+const SampleImageGridCard = ({ sample, index, onSelect, onLoadPreview, isProcessing }: {
   sample: SampleImage;
   index: number;
   onSelect: (id: string) => void;
@@ -562,6 +582,7 @@ const SampleImageCard = ({ sample, index, onSelect, onLoadPreview, isProcessing 
       const previewData = await onLoadPreview(sample.id);
       if (previewData) {
         setPreview(previewData);
+        setShowPreview(true);
       }
     } catch (error) {
       console.error('Failed to load preview:', error);
@@ -570,33 +591,45 @@ const SampleImageCard = ({ sample, index, onSelect, onLoadPreview, isProcessing 
     }
   };
 
+  // Auto-load preview when dropdown opens
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      loadPreview();
+    }, index * 200); // Stagger loading to avoid overwhelming the server
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClick = () => {
+    if (!isProcessing) {
+      onSelect(sample.id);
+    }
+  };
+
   return (
-    <div className={`border border-white/20 rounded-lg overflow-hidden hover:border-blue-400/50 transition-all duration-300 transform hover:scale-[1.02] animate-fade-in delay-${(index + 1) * 100}`}>
-      {/* Preview Section */}
-      <div className="relative">
+    <div 
+      className={`group relative border border-white/20 rounded-lg overflow-hidden hover:border-blue-400/50 transition-all duration-300 transform hover:scale-105 animate-fade-in aspect-square cursor-pointer ${isProcessing ? 'opacity-50 pointer-events-none' : ''}`}
+      style={{ animationDelay: `${index * 100}ms` }}
+      onClick={handleClick}
+    >
+      
+      {/* Image Preview */}
+      <div className="relative w-full h-full">
         {showPreview && preview ? (
           <img 
             src={preview} 
             alt={sample.name}
-            className="w-full h-32 object-cover"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-32 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
             {loadingPreview ? (
               <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
             ) : (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setShowPreview(true);
-                  loadPreview();
-                }}
-                className="text-gray-400 hover:text-white"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Load Preview
-              </Button>
+              <div className="text-center p-2">
+                <Upload className="h-6 w-6 text-gray-400 mx-auto mb-1" />
+                <p className="text-xs text-gray-400">Preview</p>
+              </div>
             )}
           </div>
         )}
@@ -610,31 +643,25 @@ const SampleImageCard = ({ sample, index, onSelect, onLoadPreview, isProcessing 
             {sample.risk_level.toUpperCase()}
           </Badge>
         </div>
-      </div>
-      
-      {/* Content Section */}
-      <div className="p-4">
-        <h4 className="text-white font-medium mb-1">{sample.name}</h4>
-        <p className="text-gray-400 text-sm mb-3">{sample.description}</p>
-        
-        <Button
-          onClick={() => onSelect(sample.id)}
-          disabled={isProcessing}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-          size="sm"
-        >
-          {isProcessing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            <>
-              <Play className="mr-2 h-4 w-4" />
-              Analyze Sample
-            </>
-          )}
-        </Button>
+
+        {/* Processing Overlay */}
+        {isProcessing && (
+          <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-400 mx-auto mb-2" />
+              <p className="text-white text-sm">Analyzing...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Click Indicator */}
+        {!isProcessing && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <Play className="h-8 w-8 text-white" />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
