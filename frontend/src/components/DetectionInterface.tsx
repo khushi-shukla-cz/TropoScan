@@ -29,6 +29,7 @@ interface SampleImage {
   name: string;
   description: string;
   risk_level: string;
+  preview?: string;
 }
 
 const DetectionInterface = () => {
@@ -36,27 +37,51 @@ const DetectionInterface = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<DetectionResult | null>(null);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [sampleImages] = useState<SampleImage[]>([
-    {
-      id: "normal",
-      name: "Normal Conditions",
-      description: "Clear skies with minimal cloud cover",
-      risk_level: "low"
-    },
-    {
-      id: "developing", 
-      name: "Developing Cluster",
-      description: "Organized cloud formation with moderate convection",
-      risk_level: "moderate"
-    },
-    {
-      id: "cyclone",
-      name: "Cyclone Formation",
-      description: "Deep convective system with spiral structure", 
-      risk_level: "high"
-    }
-  ]);
+  const [sampleImages, setSampleImages] = useState<SampleImage[]>([]);
+  const [loadingSamples, setLoadingSamples] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Load sample images from backend
+    const loadSampleImages = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/sample-images');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setSampleImages(data.samples);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load sample images:', error);
+        // Fallback to static samples if backend is unavailable
+        setSampleImages([
+          {
+            id: "normal",
+            name: "Normal Conditions",
+            description: "Clear skies with minimal cloud cover",
+            risk_level: "low"
+          },
+          {
+            id: "developing", 
+            name: "Developing Cluster",
+            description: "Organized cloud formation with moderate convection",
+            risk_level: "moderate"
+          },
+          {
+            id: "cyclone",
+            name: "Cyclone Formation",
+            description: "Deep convective system with spiral structure", 
+            risk_level: "high"
+          }
+        ]);
+      } finally {
+        setLoadingSamples(false);
+      }
+    };
+
+    loadSampleImages();
+  }, []);
 
   useEffect(() => {
     // Request notification permission on component mount
@@ -72,6 +97,21 @@ const DetectionInterface = () => {
     };
     initNotifications();
   }, [toast]);
+
+  const loadSamplePreview = async (sampleId: string) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/sample/${sampleId}/preview`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          return `data:image/jpeg;base64,${data.image_data}`;
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to load preview for ${sampleId}:`, error);
+    }
+    return null;
+  };
 
   const sendRiskNotification = (riskData: DetectionResult['risk_data']) => {
     if (!notificationsEnabled) return;
@@ -254,7 +294,7 @@ const DetectionInterface = () => {
           <div>
             <h1 className="text-4xl font-bold text-white mb-4 animate-scale-in">AI Detection Interface</h1>
             <p className="text-gray-300 text-lg animate-fade-in delay-100">
-              Upload INSAT-3D infrared satellite images or use sample data to detect tropical cloud clusters
+              Upload INSAT-3D infrared satellite images or try our sample images to detect tropical cloud clusters
             </p>
           </div>
           <Button
@@ -329,31 +369,43 @@ const DetectionInterface = () => {
           {/* Sample Images */}
           <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500 transform hover:scale-[1.02] hover:shadow-xl">
             <CardHeader>
-              <CardTitle className="text-white animate-fade-in">Sample Images</CardTitle>
+              <CardTitle className="text-white animate-fade-in flex items-center justify-between">
+                <span>Sample Images</span>
+                <Badge variant="outline" className="text-blue-400 border-blue-400">
+                  Try Our Samples
+                </Badge>
+              </CardTitle>
+              <p className="text-gray-300 text-sm">
+                Don't have satellite images? Try our preprocessed samples to see the AI detection in action
+              </p>
             </CardHeader>
             <CardContent className="space-y-3">
-              {sampleImages.map((sample, index) => (
-                <Button
-                  key={sample.id}
-                  variant="outline"
-                  className={`w-full justify-start border-white/20 text-white hover:bg-white/10 transition-all duration-300 transform hover:scale-105 animate-fade-in delay-${(index + 1) * 100}`}
-                  onClick={() => processSampleImage(sample.id)}
-                  disabled={isProcessing}
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="text-left">
-                      <div className="font-medium">{sample.name}</div>
-                      <div className="text-sm text-gray-400">{sample.description}</div>
-                    </div>
-                    <Badge 
-                      variant={sample.risk_level === "high" ? "destructive" : sample.risk_level === "moderate" ? "default" : "secondary"}
-                      className="ml-2"
-                    >
-                      {sample.risk_level}
-                    </Badge>
-                  </div>
-                </Button>
-              ))}
+              {loadingSamples ? (
+                <div className="text-center py-4">
+                  <Loader2 className="h-6 w-6 animate-spin mx-auto mb-2 text-blue-400" />
+                  <p className="text-gray-400 text-sm">Loading sample images...</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3">
+                  {sampleImages.map((sample, index) => (
+                    <SampleImageCard
+                      key={sample.id}
+                      sample={sample}
+                      index={index}
+                      onSelect={processSampleImage}
+                      onLoadPreview={loadSamplePreview}
+                      isProcessing={isProcessing}
+                    />
+                  ))}
+                </div>
+              )}
+              
+              {!loadingSamples && sampleImages.length === 0 && (
+                <div className="text-center py-4">
+                  <AlertTriangle className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
+                  <p className="text-gray-400 text-sm">No sample images available</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -485,6 +537,104 @@ const DetectionInterface = () => {
             </Card>
           )}
         </div>
+      </div>
+    </div>
+  );
+};
+
+// Sample Image Card Component with Preview
+const SampleImageCard = ({ sample, index, onSelect, onLoadPreview, isProcessing }: {
+  sample: SampleImage;
+  index: number;
+  onSelect: (id: string) => void;
+  onLoadPreview: (id: string) => Promise<string | null>;
+  isProcessing: boolean;
+}) => {
+  const [preview, setPreview] = useState<string | null>(null);
+  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const loadPreview = async () => {
+    if (preview) return; // Already loaded
+    
+    setLoadingPreview(true);
+    try {
+      const previewData = await onLoadPreview(sample.id);
+      if (previewData) {
+        setPreview(previewData);
+      }
+    } catch (error) {
+      console.error('Failed to load preview:', error);
+    } finally {
+      setLoadingPreview(false);
+    }
+  };
+
+  return (
+    <div className={`border border-white/20 rounded-lg overflow-hidden hover:border-blue-400/50 transition-all duration-300 transform hover:scale-[1.02] animate-fade-in delay-${(index + 1) * 100}`}>
+      {/* Preview Section */}
+      <div className="relative">
+        {showPreview && preview ? (
+          <img 
+            src={preview} 
+            alt={sample.name}
+            className="w-full h-32 object-cover"
+          />
+        ) : (
+          <div className="w-full h-32 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+            {loadingPreview ? (
+              <Loader2 className="h-6 w-6 animate-spin text-blue-400" />
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowPreview(true);
+                  loadPreview();
+                }}
+                className="text-gray-400 hover:text-white"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Load Preview
+              </Button>
+            )}
+          </div>
+        )}
+        
+        {/* Risk Badge Overlay */}
+        <div className="absolute top-2 right-2">
+          <Badge 
+            variant={sample.risk_level === "high" ? "destructive" : sample.risk_level === "moderate" ? "default" : "secondary"}
+            className="text-xs"
+          >
+            {sample.risk_level.toUpperCase()}
+          </Badge>
+        </div>
+      </div>
+      
+      {/* Content Section */}
+      <div className="p-4">
+        <h4 className="text-white font-medium mb-1">{sample.name}</h4>
+        <p className="text-gray-400 text-sm mb-3">{sample.description}</p>
+        
+        <Button
+          onClick={() => onSelect(sample.id)}
+          disabled={isProcessing}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          size="sm"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <Play className="mr-2 h-4 w-4" />
+              Analyze Sample
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );

@@ -1,21 +1,5 @@
 import { useState } from "react";
-import {
-  Cloud,
-  Satellite,
-  AlertTriangle,
-  TrendingUp,
-  Eye,
-  Download,
-  MapPin,
-  Clock,
-  Thermometer,
-  Sun,
-  Moon,
-  Activity,
-  Zap,
-  Bell,
-  FileText,
-} from "lucide-react";
+import { Cloud, Satellite, AlertTriangle, TrendingUp, Eye, Download, MapPin, Clock, Thermometer, Sun, Moon, Activity, Zap, Bell, FileText, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +11,7 @@ import HistoricalCases from "@/components/HistoricalCases";
 import RiskClassification from "@/components/RiskClassification";
 import SystemStatus from "@/components/SystemStatus";
 import CycloneSimulator from "@/components/CycloneSimulator";
+import ModelValidation from "@/components/ModelValidation";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -237,6 +222,11 @@ const Index = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Model Validation Component */}
+            <div className="animate-fade-in delay-800">
+              <ModelValidation />
+            </div>
           </section>
         </div>
       )}
