@@ -16,7 +16,7 @@ import {
   Radio,
   Package,
   FileText,
-  MapPin
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,9 +31,9 @@ const DisasterPreparedness = () => {
 
   const toggleItem = (category, item) => {
     const key = `${category}-${item}`;
-    setCheckedItems(prev => ({
+    setCheckedItems((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
@@ -49,8 +49,8 @@ const DisasterPreparedness = () => {
         "Property ownership documents",
         "Emergency contact list with phone numbers",
         "Medical records and prescription details",
-        "Recent photographs of family members"
-      ]
+        "Recent photographs of family members",
+      ],
     },
     {
       category: "Food & Water",
@@ -63,8 +63,8 @@ const DisasterPreparedness = () => {
         "Baby formula and food (if applicable)",
         "Pet food and supplies",
         "Special dietary requirements food",
-        "Energy bars and dried fruits"
-      ]
+        "Energy bars and dried fruits",
+      ],
     },
     {
       category: "Medical Supplies",
@@ -77,8 +77,8 @@ const DisasterPreparedness = () => {
         "Hand sanitizer and face masks",
         "Personal hygiene items",
         "Glasses/contact lenses and solutions",
-        "Medical alert bracelets or tags"
-      ]
+        "Medical alert bracelets or tags",
+      ],
     },
     {
       category: "Electronics & Communication",
@@ -91,8 +91,8 @@ const DisasterPreparedness = () => {
         "Portable solar charger",
         "Two-way radios for family communication",
         "Backup batteries (various sizes)",
-        "Emergency whistle for signaling"
-      ]
+        "Emergency whistle for signaling",
+      ],
     },
     {
       category: "Clothing & Shelter",
@@ -105,8 +105,8 @@ const DisasterPreparedness = () => {
         "Emergency tent or tarp",
         "Work gloves and safety gear",
         "Dust masks and plastic sheeting",
-        "Duct tape and zip-lock bags"
-      ]
+        "Duct tape and zip-lock bags",
+      ],
     },
     {
       category: "Tools & Supplies",
@@ -119,9 +119,9 @@ const DisasterPreparedness = () => {
         "Local area maps (physical copies)",
         "Fire extinguisher and smoke alarms",
         "Plastic garbage bags and ties",
-        "Paper plates, cups, and utensils"
-      ]
-    }
+        "Paper plates, cups, and utensils",
+      ],
+    },
   ];
 
   const evacuationPlan = {
@@ -133,7 +133,7 @@ const DisasterPreparedness = () => {
       "Fill bathtubs and containers with fresh water",
       "Charge all electronic devices and power banks",
       "Review evacuation routes and alternate paths",
-      "Inform family and friends of your emergency plan"
+      "Inform family and friends of your emergency plan",
     ],
     duringCyclone: [
       "Stay indoors and away from windows and glass doors",
@@ -143,7 +143,7 @@ const DisasterPreparedness = () => {
       "Do not go outside during the eye of the storm",
       "If flooding occurs, move to higher ground immediately",
       "Avoid walking or driving through flood water",
-      "Use flashlights instead of candles for lighting"
+      "Use flashlights instead of candles for lighting",
     ],
     afterCyclone: [
       "Wait for official all-clear before going outside",
@@ -153,29 +153,24 @@ const DisasterPreparedness = () => {
       "Avoid drinking tap water until declared safe",
       "Help neighbors, especially elderly and disabled",
       "Report emergencies to local authorities",
-      "Stay away from damaged buildings and bridges"
-    ]
+      "Stay away from damaged buildings and bridges",
+    ],
   };
 
-  const emergencyContacts = [
-    { name: "National Emergency", number: "112", priority: "critical" },
-    { name: "NDMA Helpline", number: "1078", priority: "critical" },
-    { name: "Medical Emergency", number: "108", priority: "critical" },
-    { name: "Local Emergency Control", number: "1077", priority: "high" },
-    { name: "Power Emergency", number: "1912", priority: "medium" },
-    { name: "Gas Emergency", number: "1906", priority: "medium" }
-  ];
-
   const getCompletionPercentage = (category) => {
-    const categoryItems = emergencyKitItems.find(kit => kit.category === category)?.items || [];
-    const checkedCount = categoryItems.filter((_, index) => 
-      checkedItems[`${category}-${index}`]
+    const categoryItems =
+      emergencyKitItems.find((kit) => kit.category === category)?.items || [];
+    const checkedCount = categoryItems.filter(
+      (_, index) => checkedItems[`${category}-${index}`]
     ).length;
     return Math.round((checkedCount / categoryItems.length) * 100);
   };
 
   const getTotalCompletion = () => {
-    const totalItems = emergencyKitItems.reduce((sum, kit) => sum + kit.items.length, 0);
+    const totalItems = emergencyKitItems.reduce(
+      (sum, kit) => sum + kit.items.length,
+      0
+    );
     const checkedCount = Object.values(checkedItems).filter(Boolean).length;
     return Math.round((checkedCount / totalItems) * 100);
   };
@@ -183,7 +178,7 @@ const DisasterPreparedness = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950">
       <EmergencyNavbar currentPage="preparedness" />
-      
+
       {/* Page Header */}
       <div className="bg-green-600/20 border-b border-green-500/30 backdrop-blur-md">
         <div className="container mx-auto px-4 py-6">
@@ -191,8 +186,12 @@ const DisasterPreparedness = () => {
             <div className="flex items-center space-x-3">
               <Shield className="w-8 h-8 text-green-400" />
               <div>
-                <h1 className="text-3xl font-bold text-white">Disaster Preparedness</h1>
-                <p className="text-gray-300">Essential survival guides and preparation checklists</p>
+                <h1 className="text-3xl font-bold text-white">
+                  Disaster Preparedness
+                </h1>
+                <p className="text-gray-300">
+                  Essential survival guides and preparation checklists
+                </p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -200,7 +199,9 @@ const DisasterPreparedness = () => {
                 <div className="text-white font-bold text-lg">
                   {getTotalCompletion()}% Complete
                 </div>
-                <div className="text-gray-300 text-sm">Emergency Kit Preparation</div>
+                <div className="text-gray-300 text-sm">
+                  Emergency Kit Preparation
+                </div>
               </div>
             </div>
           </div>
@@ -208,54 +209,22 @@ const DisasterPreparedness = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Quick Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-green-500/30 bg-green-950/20">
-            <CardContent className="p-6 text-center">
-              <Package className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-white">{emergencyKitItems.length}</h3>
-              <p className="text-gray-300">Kit Categories</p>
-            </CardContent>
-          </Card>
-          <Card className="border-blue-500/30 bg-blue-950/20">
-            <CardContent className="p-6 text-center">
-              <CheckCircle className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-white">
-                {Object.values(checkedItems).filter(Boolean).length}
-              </h3>
-              <p className="text-gray-300">Items Prepared</p>
-            </CardContent>
-          </Card>
-          <Card className="border-yellow-500/30 bg-yellow-950/20">
-            <CardContent className="p-6 text-center">
-              <Clock className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-white">72</h3>
-              <p className="text-gray-300">Hours Coverage</p>
-            </CardContent>
-          </Card>
-          <Card className="border-purple-500/30 bg-purple-950/20">
-            <CardContent className="p-6 text-center">
-              <Users className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-              <h3 className="text-2xl font-bold text-white">4</h3>
-              <p className="text-gray-300">Family Members</p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Main Content Tabs */}
         <Tabs defaultValue="emergency-kit" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="emergency-kit" className="flex items-center space-x-2">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger
+              value="emergency-kit"
+              className="flex items-center space-x-2"
+            >
               <Package className="w-4 h-4" />
               <span>Emergency Kit</span>
             </TabsTrigger>
-            <TabsTrigger value="evacuation-plan" className="flex items-center space-x-2">
+            <TabsTrigger
+              value="evacuation-plan"
+              className="flex items-center space-x-2"
+            >
               <MapPin className="w-4 h-4" />
               <span>Action Plan</span>
-            </TabsTrigger>
-            <TabsTrigger value="emergency-contacts" className="flex items-center space-x-2">
-              <Phone className="w-4 h-4" />
-              <span>Quick Contacts</span>
             </TabsTrigger>
           </TabsList>
 
@@ -270,21 +239,33 @@ const DisasterPreparedness = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-300 mb-6">
-                  Prepare a comprehensive emergency kit that can sustain your family for at least 72 hours. 
-                  Check items as you add them to your kit.
+                  Prepare a comprehensive emergency kit that can sustain your
+                  family for at least 72 hours. Check items as you add them to
+                  your kit.
                 </p>
                 <div className="space-y-6">
                   {emergencyKitItems.map((kit, kitIndex) => (
-                    <Card key={kitIndex} className="border-gray-600/30 bg-gray-900/30">
+                    <Card
+                      key={kitIndex}
+                      className="border-gray-600/30 bg-gray-900/30"
+                    >
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <CardTitle className="flex items-center text-white text-lg">
                             {kit.icon}
                             <span className="ml-2">{kit.category}</span>
                           </CardTitle>
-                          <Badge 
-                            variant={getCompletionPercentage(kit.category) === 100 ? "default" : "secondary"}
-                            className={getCompletionPercentage(kit.category) === 100 ? "bg-green-600" : ""}
+                          <Badge
+                            variant={
+                              getCompletionPercentage(kit.category) === 100
+                                ? "default"
+                                : "secondary"
+                            }
+                            className={
+                              getCompletionPercentage(kit.category) === 100
+                                ? "bg-green-600"
+                                : ""
+                            }
                           >
                             {getCompletionPercentage(kit.category)}% Complete
                           </Badge>
@@ -293,25 +274,33 @@ const DisasterPreparedness = () => {
                       <CardContent>
                         <div className="grid md:grid-cols-2 gap-2">
                           {kit.items.map((item, itemIndex) => (
-                            <div 
+                            <div
                               key={itemIndex}
                               className="flex items-center space-x-3 p-2 rounded hover:bg-gray-800/50 cursor-pointer"
-                              onClick={() => toggleItem(kit.category, itemIndex)}
+                              onClick={() =>
+                                toggleItem(kit.category, itemIndex)
+                              }
                             >
-                              <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-all ${
-                                checkedItems[`${kit.category}-${itemIndex}`] 
-                                  ? 'bg-green-600 border-green-600' 
-                                  : 'border-gray-400'
-                              }`}>
-                                {checkedItems[`${kit.category}-${itemIndex}`] && (
+                              <div
+                                className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-all ${
+                                  checkedItems[`${kit.category}-${itemIndex}`]
+                                    ? "bg-green-600 border-green-600"
+                                    : "border-gray-400"
+                                }`}
+                              >
+                                {checkedItems[
+                                  `${kit.category}-${itemIndex}`
+                                ] && (
                                   <CheckCircle className="w-3 h-3 text-white" />
                                 )}
                               </div>
-                              <span className={`text-sm ${
-                                checkedItems[`${kit.category}-${itemIndex}`] 
-                                  ? 'text-green-400 line-through' 
-                                  : 'text-gray-300'
-                              }`}>
+                              <span
+                                className={`text-sm ${
+                                  checkedItems[`${kit.category}-${itemIndex}`]
+                                    ? "text-green-400 line-through"
+                                    : "text-gray-300"
+                                }`}
+                              >
                                 {item}
                               </span>
                             </div>
@@ -394,69 +383,6 @@ const DisasterPreparedness = () => {
                 </CardContent>
               </Card>
             </div>
-          </TabsContent>
-
-          {/* Emergency Contacts Tab */}
-          <TabsContent value="emergency-contacts" className="space-y-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {emergencyContacts.map((contact, index) => (
-                <Card 
-                  key={index}
-                  className={`transition-all duration-300 hover:scale-105 border-2 ${
-                    contact.priority === 'critical' ? 'border-red-500 bg-red-950/30' :
-                    contact.priority === 'high' ? 'border-orange-500 bg-orange-950/30' :
-                    'border-blue-500 bg-blue-950/30'
-                  }`}
-                >
-                  <CardContent className="p-6 text-center">
-                    <Phone className="w-8 h-8 mx-auto mb-3 text-blue-400" />
-                    <h3 className="font-bold text-white mb-2">{contact.name}</h3>
-                    <div className="text-3xl font-mono font-bold text-white mb-4">
-                      {contact.number}
-                    </div>
-                    <Button 
-                      variant={contact.priority === 'critical' ? 'destructive' : 'default'}
-                      className="w-full"
-                      onClick={() => window.location.href = `tel:${contact.number}`}
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      Call Now
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            <Card className="border-blue-500/30 bg-blue-950/20">
-              <CardHeader>
-                <CardTitle className="flex items-center text-blue-400">
-                  <Users className="w-5 h-5 mr-2" />
-                  Family Emergency Plan
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <h4 className="text-white font-semibold">Establish Meeting Points:</h4>
-                    <ul className="text-gray-300 text-sm space-y-1 ml-4">
-                      <li>• Primary: Near your home (e.g., neighborhood center)</li>
-                      <li>• Secondary: Outside your area (e.g., relative's house)</li>
-                      <li>• Out-of-state contact for family coordination</li>
-                      <li>• Share locations with all family members</li>
-                    </ul>
-                  </div>
-                  <div className="space-y-3">
-                    <h4 className="text-white font-semibold">Communication Plan:</h4>
-                    <ul className="text-gray-300 text-sm space-y-1 ml-4">
-                      <li>• Designate an out-of-area emergency contact</li>
-                      <li>• Ensure everyone knows the contact information</li>
-                      <li>• Practice your emergency communication plan</li>
-                      <li>• Keep contact information updated regularly</li>
-                    </ul>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
       </div>

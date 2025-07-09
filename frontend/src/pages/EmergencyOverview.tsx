@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { 
-  AlertTriangle, 
-  Phone, 
-  MapPin, 
-  Clock, 
-  Users, 
-  Shield, 
+import {
+  AlertTriangle,
+  Phone,
+  MapPin,
+  Clock,
+  Users,
+  Shield,
   Navigation,
   Heart,
   ChevronRight,
   ExternalLink,
   Car,
   Home,
-  Zap
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,41 +39,33 @@ const EmergencyOverview = () => {
       icon: <Phone className="w-6 h-6" />,
       path: "/emergency/contacts",
       color: "bg-red-500",
-      urgent: true
+      urgent: false,
     },
     {
       name: "Evacuation Centers",
       description: "Find nearest safe shelters and relief camps",
       icon: <MapPin className="w-6 h-6" />,
       path: "/emergency/evacuation",
-      color: "bg-orange-500",
-      urgent: true
+      color: "bg-green-500",
+      urgent: false,
     },
     {
       name: "Disaster Preparedness",
       description: "Essential survival guides and preparation tips",
       icon: <Shield className="w-6 h-6" />,
       path: "/emergency/preparedness",
-      color: "bg-blue-500",
-      urgent: false
+      color: "bg-purple-500",
+      urgent: false,
     },
-    {
-      name: "Live Emergency Map",
-      description: "Real-time emergency services and safe zones",
-      icon: <Navigation className="w-6 h-6" />,
-      path: "/emergency/evacuation",
-      color: "bg-green-500",
-      urgent: false
-    }
   ];
 
-  const currentAlert = {
-    level: "HIGH",
-    message: "Severe Cyclone Warning - Immediate Action Required",
-    location: "Mumbai Metropolitan Area",
-    time: "Active since 14:30 IST",
-    nextUpdate: "18:00 IST"
-  };
+  // const currentAlert = {
+  //   level: "HIGH",
+  //   message: "Severe Cyclone Warning - Immediate Action Required",
+  //   location: "Mumbai Metropolitan Area",
+  //   time: "Active since 14:30 IST",
+  //   nextUpdate: "18:00 IST",
+  // };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950">
@@ -87,13 +79,20 @@ const EmergencyOverview = () => {
             <div className="flex items-center space-x-3">
               <AlertTriangle className="w-6 h-6 text-red-400 animate-pulse" />
               <div>
-                <h2 className="text-xl font-bold text-white">Emergency Response Center</h2>
-                <p className="text-gray-300 text-sm">Real-time emergency coordination and support</p>
+                <h2 className="text-xl font-bold text-white">
+                  Emergency Response Center
+                </h2>
+                <p className="text-gray-300 text-sm">
+                  Real-time emergency coordination and support
+                </p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-white font-mono text-lg">
-                {currentTime.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' })} IST
+                {currentTime.toLocaleTimeString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                })}{" "}
+                IST
               </div>
               <div className="text-gray-300 text-sm">
                 <MapPin className="w-4 h-4 inline mr-1" />
@@ -106,7 +105,7 @@ const EmergencyOverview = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Current Alert Banner */}
-        <Card className="mb-8 border-red-500 bg-red-950/50 animate-pulse">
+        {/* <Card className="mb-8 border-red-500 bg-red-950/50 animate-pulse">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div className="flex items-start space-x-4">
@@ -133,40 +132,52 @@ const EmergencyOverview = () => {
                   </p>
                 </div>
               </div>
-              <Button 
-                variant="destructive" 
+              <Button
+                variant="destructive"
                 className="animate-bounce"
-                onClick={() => navigate('/emergency/contacts')}
+                onClick={() => navigate("/emergency/contacts")}
               >
                 Get Help Now
                 <ExternalLink className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Quick Action Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 ">
           {emergencyServices.map((service, index) => (
-            <Card 
+            <Card
               key={index}
-              className={`cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 ${
-                service.urgent ? 'border-red-500 bg-red-950/30' : 'border-blue-500/30 bg-blue-950/20'
+              className={`cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2  ${
+                service.urgent
+                  ? "border-red-500 bg-red-950/30"
+                  : "border-blue-500/30 bg-blue-950/20"
               }`}
               onClick={() => navigate(service.path)}
             >
-              <CardContent className="p-6 text-center">
-                <div className={`w-12 h-12 rounded-full ${service.color} flex items-center justify-center mx-auto mb-4 ${
-                  service.urgent ? 'animate-pulse' : ''
-                }`}>
+              <CardContent className="p-6 text-center  h-[400px] space-y-8">
+                <div
+                  className={`w-12 h-12 rounded-full ${
+                    service.color
+                  } flex items-center justify-center mx-auto mb-3 ${
+                    service.urgent ? "animate-pulse" : ""
+                  }`}
+                >
                   {service.icon}
                 </div>
-                <h3 className="font-bold text-white mb-2">{service.name}</h3>
-                <p className="text-gray-300 text-sm mb-4">{service.description}</p>
-                <Button 
-                  variant={service.urgent ? "destructive" : "secondary"} 
-                  size="sm"
-                  className="w-full"
+                <h2 className="font-bold text-white text-lg">{service.name}</h2>
+                <p className="text-gray-300 text-lg mb-4">
+                  {service.description}
+                </p>
+                <Button
+                  variant={service.urgent ? "destructive" : "secondary"}
+                  size="lg"
+                  className={`w-full ${
+                    service.urgent
+                      ? "bg-red-600 hover:bg-red-700"
+                      : "bg-blue-500 hover:bg-blue-800"
+                  } text-white`}
                 >
                   Access Now
                   <ChevronRight className="w-4 h-4 ml-2" />
@@ -179,7 +190,7 @@ const EmergencyOverview = () => {
         {/* Critical Information Panel */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Immediate Actions */}
-          <Card className="border-orange-500/30 bg-orange-950/20">
+          {/* <Card className="border-orange-500/30 bg-orange-950/20">
             <CardHeader>
               <CardTitle className="flex items-center text-orange-400">
                 <Zap className="w-5 h-5 mr-2" />
@@ -190,33 +201,41 @@ const EmergencyOverview = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 p-3 bg-orange-900/30 rounded-lg">
                   <Home className="w-5 h-5 text-orange-400" />
-                  <span className="text-white">Secure all outdoor items and windows</span>
+                  <span className="text-white">
+                    Secure all outdoor items and windows
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3 p-3 bg-orange-900/30 rounded-lg">
                   <Car className="w-5 h-5 text-orange-400" />
-                  <span className="text-white">Avoid travel unless absolutely necessary</span>
+                  <span className="text-white">
+                    Avoid travel unless absolutely necessary
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3 p-3 bg-orange-900/30 rounded-lg">
                   <Phone className="w-5 h-5 text-orange-400" />
-                  <span className="text-white">Keep emergency contacts readily available</span>
+                  <span className="text-white">
+                    Keep emergency contacts readily available
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3 p-3 bg-orange-900/30 rounded-lg">
                   <Heart className="w-5 h-5 text-orange-400" />
-                  <span className="text-white">Check on elderly neighbors and relatives</span>
+                  <span className="text-white">
+                    Check on elderly neighbors and relatives
+                  </span>
                 </div>
               </div>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white"
-                onClick={() => navigate('/emergency/preparedness')}
+                onClick={() => navigate("/emergency/preparedness")}
               >
                 View Complete Checklist
               </Button>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Emergency Statistics */}
-          <Card className="border-blue-500/30 bg-blue-950/20">
+          {/* <Card className="border-blue-500/30 bg-blue-950/20">
             <CardHeader>
               <CardTitle className="flex items-center text-blue-400">
                 <Users className="w-5 h-5 mr-2" />
@@ -250,18 +269,7 @@ const EmergencyOverview = () => {
                 Find Nearest Center
               </Button>
             </CardContent>
-          </Card>
-        </div>
-
-        {/* Back to Dashboard */}
-        <div className="text-center mt-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="text-gray-400 hover:text-white"
-          >
-            ← Back to TropoScan Dashboard
-          </Button>
+          </Card> */}
         </div>
       </div>
     </div>
