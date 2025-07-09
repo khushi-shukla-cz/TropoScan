@@ -28,36 +28,54 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/trending" element={<TrendingPatterns />} />
-            <Route path="/cyclone-simulator" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <CycloneSimulator />
-              </Suspense>
-            } />
-            <Route path="/notifications" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <Notifications />
-              </Suspense>
-            } />
-            <Route path="/emergency" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <EmergencyOverview />
-              </Suspense>
-            } />
-            <Route path="/emergency/contacts" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <EmergencyContacts />
-              </Suspense>
-            } />
-            <Route path="/emergency/evacuation" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <EvacuationCenters />
-              </Suspense>
-            } />
-            <Route path="/emergency/preparedness" element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <DisasterPreparedness />
-              </Suspense>
-            } />
+            <Route
+              path="/CycloneSimulator"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <CycloneSimulator />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Notifications />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/emergency"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <EmergencyOverview />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/emergency/contacts"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <EmergencyContacts />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/emergency/evacuation"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <EvacuationCenters />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/emergency/preparedness"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <DisasterPreparedness />
+                </Suspense>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

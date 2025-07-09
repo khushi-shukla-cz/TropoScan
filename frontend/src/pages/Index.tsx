@@ -3,22 +3,21 @@ import { Cloud, Satellite, AlertTriangle, TrendingUp, Eye, Download, MapPin, Clo
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import DetectionInterface from "@/components/DetectionInterface";
 import HistoricalCases from "@/components/HistoricalCases";
-import RiskClassification from "@/components/RiskClassification";
 import SystemStatus from "@/components/SystemStatus";
 import CycloneSimulator from "@/components/CycloneSimulator";
 import ModelValidation from "@/components/ModelValidation";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
   const { toast } = useToast();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 transition-all duration-500">
@@ -47,34 +46,45 @@ const Index = () => {
                 )}
               </Button>
               <div className="flex space-x-2">
-                {["home", "detection", "simulator", "cases", "emergency"].map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => {
-                        if (tab === "emergency") {
-                          navigate("/emergency");
-                        } else {
-                          setActiveTab(tab);
-                        }
-                      }}
-                      className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
-                        activeTab === tab
-                          ? "bg-blue-600 text-white shadow-lg animate-scale-in"
-                          : "text-gray-300 hover:text-white hover:bg-white/10"
-                      }`}
-                    >
-                      {tab === "emergency" && (
-                        <AlertTriangle className="h-4 w-4" />
-                      )}
-                      {tab === "detection" && <Eye className="h-4 w-4" />}
-                      {tab === "simulator" && <Activity className="h-4 w-4" />}
-                      {tab === "cases" && <FileText className="h-4 w-4" />}
-                      {tab === "home" && <Cloud className="h-4 w-4" />}
-                      <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
-                    </button>
-                  )
-                )}
+                {["home", "detection", "cases", "emergency"].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => {
+                      if (tab === "emergency") {
+                        navigate("/emergency");
+                      } else {
+                        setActiveTab(tab);
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                      activeTab === tab
+                        ? "bg-blue-600 text-white shadow-lg animate-scale-in"
+                        : "text-gray-300 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {tab === "home" && <Cloud className="h-4 w-4" />}
+                    {tab === "detection" && <Eye className="h-4 w-4" />}
+                    {tab === "cases" && <FileText className="h-4 w-4" />}
+                    {tab === "emergency" && (
+                      <AlertTriangle className="h-4 w-4" />
+                    )}
+                    <span>{tab.charAt(0).toUpperCase() + tab.slice(1)}</span>
+                  </button>
+                ))}
+
+                {/* Simulator Tab - Route Navigation */}
+                <button
+                  onClick={() => navigate("/CycloneSimulator")}
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
+                    location.pathname === "/CycloneSimulator"
+                      ? "bg-blue-600 text-white shadow-lg"
+                      : "text-gray-300 hover:text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Activity className="h-4 w-4" />
+                  <span>Simulator</span>
+                </button>
+
                 <button
                   onClick={() => navigate("/trending")}
                   className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
@@ -82,6 +92,7 @@ const Index = () => {
                   <TrendingUp className="h-4 w-4" />
                   <span>Trends</span>
                 </button>
+
                 <button
                   onClick={() => navigate("/notifications")}
                   className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
@@ -95,15 +106,15 @@ const Index = () => {
         </div>
       </nav>
 
-      {/* Content based on active tab */}
+      {/* Main Content */}
       {activeTab === "home" && (
         <div className="animate-fade-in">
           {/* Hero Section */}
           <section className="container mx-auto px-4 py-16">
             <div className="text-center mb-16 animate-scale-in">
               <h2 className="text-5xl font-bold text-white mb-6 animate-fade-in delay-100">
-                Early Warning System for
-                <span className="text-blue-400"> Tropical Storms</span>
+                Early Warning System for{" "}
+                <span className="text-blue-400">Tropical Storms</span>
               </h2>
               <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in delay-200">
                 Using AI and INSAT satellite data to detect dangerous cloud
@@ -122,30 +133,13 @@ const Index = () => {
                   size="lg"
                   variant="outline"
                   className="border-white/20 text-white hover:bg-white/10 transform hover:scale-105 transition-all duration-300"
-                  onClick={() => navigate("/cyclone-simulator")}
+                  onClick={() => navigate("/CycloneSimulator")}
                 >
                   <Zap className="mr-2 h-5 w-5" />
                   Cyclone Simulator
                 </Button>
               </div>
             </div>
-
-            {/* Stats
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-              {[
-                { value: "2+", label: "Hours Earlier Detection", color: "blue", delay: "delay-100" },
-                { value: "92%", label: "Accuracy Rate", color: "green", delay: "delay-200" },
-                { value: "30min", label: "Update Frequency", color: "yellow", delay: "delay-300" },
-                { value: "24/7", label: "Monitoring", color: "purple", delay: "delay-500" }
-              ].map((stat, index) => (
-                <Card key={index} className={`bg-white/5 border-white/10 hover:bg-white/10 transition-all duration-500 transform hover:scale-105 hover:shadow-xl animate-fade-in ${stat.delay}`}>
-                  <CardContent className="p-6 text-center">
-                    <div className={`text-3xl font-bold text-${stat.color}-400 mb-2`}>{stat.value}</div>
-                    <div className="text-gray-300">{stat.label}</div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div> */}
 
             {/* How It Works */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
@@ -192,7 +186,7 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Impact Statement */}
+            {/* Impact */}
             <Card className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-blue-400/30 hover:shadow-2xl transition-all duration-500 animate-fade-in delay-700">
               <CardContent className="p-8 text-center">
                 <h3 className="text-2xl font-bold text-white mb-4">
@@ -234,12 +228,6 @@ const Index = () => {
       {activeTab === "detection" && (
         <div className="animate-fade-in">
           <DetectionInterface />
-        </div>
-      )}
-
-      {activeTab === "simulator" && (
-        <div className="animate-fade-in">
-          <CycloneSimulator />
         </div>
       )}
 
