@@ -1,5 +1,25 @@
 import React, { useState } from "react";
-import { Calendar, MapPin, AlertTriangle, TrendingUp, Clock, CheckCircle, Eye, Users, Shield, Zap, BarChart3, Wind, Thermometer, Droplets, Activity, Download, FileText, Calendar as CalendarIcon, ExternalLink } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  AlertTriangle,
+  TrendingUp,
+  Clock,
+  CheckCircle,
+  Eye,
+  Users,
+  Shield,
+  Zap,
+  BarChart3,
+  Wind,
+  Thermometer,
+  Droplets,
+  Activity,
+  Download,
+  FileText,
+  Calendar as CalendarIcon,
+  ExternalLink,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -476,9 +496,13 @@ const HistoricalCases = () => {
 </body>
 </html>
     `;
-    
+
     // Open the technical documentation in a new window
-    const newWindow = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+    const newWindow = window.open(
+      "",
+      "_blank",
+      "width=1200,height=800,scrollbars=yes,resizable=yes"
+    );
     if (newWindow) {
       newWindow.document.open();
       newWindow.document.write(technicalDocContent);
@@ -497,28 +521,43 @@ const HistoricalCases = () => {
       // Simulate report generation and download
       const reportData = {
         title: "TropoScan Historical Cases Analysis Report",
-        date: new Date().toISOString().split('T')[0],
-        cases: cases.map(c => ({
+        date: new Date().toISOString().split("T")[0],
+        cases: cases.map((c) => ({
           name: c.name,
           date: c.date,
           accuracy: c.metrics.accuracy,
           timeSaved: c.timeSaved,
-          impact: c.impact
+          impact: c.impact,
         })),
         summary: {
           totalCases: cases.length,
-          averageAccuracy: cases.reduce((acc, c) => acc + c.metrics.accuracy, 0) / cases.length,
-          totalEvacuated: cases.reduce((acc, c) => acc + c.metrics.evacuated, 0),
-          averageTimeSaved: cases.filter(c => c.timeSaved !== "N/A").reduce((acc, c) => acc + parseFloat(c.timeSaved.replace(' hours', '')), 0) / cases.filter(c => c.timeSaved !== "N/A").length
-        }
+          averageAccuracy:
+            cases.reduce((acc, c) => acc + c.metrics.accuracy, 0) /
+            cases.length,
+          totalEvacuated: cases.reduce(
+            (acc, c) => acc + c.metrics.evacuated,
+            0
+          ),
+          averageTimeSaved:
+            cases
+              .filter((c) => c.timeSaved !== "N/A")
+              .reduce(
+                (acc, c) => acc + parseFloat(c.timeSaved.replace(" hours", "")),
+                0
+              ) / cases.filter((c) => c.timeSaved !== "N/A").length,
+        },
       };
 
       // Create and download the report
-      const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = `TropoScan-Historical-Cases-Report-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `TropoScan-Historical-Cases-Report-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -536,29 +575,34 @@ Summary:
 - Average Time Saved: ${reportData.summary.averageTimeSaved.toFixed(1)} hours
 
 Detailed Cases:
-${reportData.cases.map(c => `
+${reportData.cases
+  .map(
+    (c) => `
 ${c.name} (${c.date})
 - Accuracy: ${c.accuracy}%
 - Time Saved: ${c.timeSaved}
 - Impact: ${c.impact}
-`).join('\n')}
+`
+  )
+  .join("\n")}
 
 This report demonstrates TropoScan's superior early warning capabilities in real-world cyclone scenarios.
       `;
 
-      const textBlob = new Blob([pdfContent], { type: 'text/plain' });
+      const textBlob = new Blob([pdfContent], { type: "text/plain" });
       const textUrl = URL.createObjectURL(textBlob);
-      const textA = document.createElement('a');
+      const textA = document.createElement("a");
       textA.href = textUrl;
-      textA.download = `TropoScan-Report-${new Date().toISOString().split('T')[0]}.txt`;
+      textA.download = `TropoScan-Report-${
+        new Date().toISOString().split("T")[0]
+      }.txt`;
       document.body.appendChild(textA);
       textA.click();
       document.body.removeChild(textA);
       URL.revokeObjectURL(textUrl);
-
     } catch (error) {
-      console.error('Error generating report:', error);
-      alert('Error generating report. Please try again.');
+      console.error("Error generating report:", error);
+      alert("Error generating report. Please try again.");
     } finally {
       setIsDownloading(false);
     }
@@ -568,25 +612,40 @@ This report demonstrates TropoScan's superior early warning capabilities in real
   const handleScheduleDemo = () => {
     // Create calendar event data
     const eventData = {
-      title: 'TropoScan Demo Session',
+      title: "TropoScan Demo Session",
       start: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       duration: 60, // 1 hour
-      description: 'Live demonstration of TropoScan AI-powered cyclone detection and forecasting system',
-      location: 'Virtual Meeting (Link will be provided)',
-      attendees: ['demo@troposcan.com']
+      description:
+        "Live demonstration of TropoScan AI-powered cyclone detection and forecasting system",
+      location: "Virtual Meeting (Link will be provided)",
+      attendees: ["demo@troposcan.com"],
     };
 
     // Create calendar invite URL (Google Calendar format)
-    const startDate = eventData.start.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    const endDate = new Date(eventData.start.getTime() + eventData.duration * 60000).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    
-    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventData.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(eventData.description)}&location=${encodeURIComponent(eventData.location)}`;
+    const startDate = eventData.start
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
+    const endDate = new Date(
+      eventData.start.getTime() + eventData.duration * 60000
+    )
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
+
+    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      eventData.title
+    )}&dates=${startDate}/${endDate}&details=${encodeURIComponent(
+      eventData.description
+    )}&location=${encodeURIComponent(eventData.location)}`;
 
     // Open calendar to schedule
-    window.open(calendarUrl, '_blank');
+    window.open(calendarUrl, "_blank");
 
     // Also simulate sending a notification
-    alert('Demo scheduled! A calendar invite has been created. Our team will contact you within 24 hours to confirm the session details.');
+    alert(
+      "Demo scheduled! A calendar invite has been created. Our team will contact you within 24 hours to confirm the session details."
+    );
   };
 
   const cases = [
@@ -600,30 +659,35 @@ This report demonstrates TropoScan's superior early warning capabilities in real
       timeSaved: "2 hours",
       severity: "Very Severe",
       status: "Successfully Predicted",
-      description: "Our AI model detected deep convection patterns and organized spiral structure formation 2 hours before official cyclone warning was issued by IMD.",
+      description:
+        "Our AI model detected deep convection patterns and organized spiral structure formation 2 hours before official cyclone warning was issued by IMD.",
       impact: "Enabled early evacuation of 180,000 people from Gujarat coast",
       images: [
         "https://c.ndtvimg.com/2023-06/e1f94td_nasa-image-of-cyclone-biparjoy_625x300_15_June_23.jpg",
-        "https://i.ytimg.com/vi/pbFSBngQw68/sddefault.jpg"
+        "https://i.ytimg.com/vi/pbFSBngQw68/sddefault.jpg",
       ],
       technicalDetails: {
         windSpeed: "120-140 km/h",
         pressure: "980 hPa",
         temperature: "-65°C cloud tops",
-        confidence: "94%"
+        confidence: "94%",
       },
       timeline: [
-        { time: "2:00 PM", event: "AI detected initial convection", type: "detection" },
+        {
+          time: "2:00 PM",
+          event: "AI detected initial convection",
+          type: "detection",
+        },
         { time: "4:00 PM", event: "TropoScan issued warning", type: "warning" },
         { time: "6:00 PM", event: "Official IMD warning", type: "official" },
-        { time: "8:00 PM", event: "Evacuation began", type: "action" }
+        { time: "8:00 PM", event: "Evacuation began", type: "action" },
       ],
       metrics: {
         accuracy: 94,
         falsePositives: 0,
         evacuated: 180000,
-        property: "₹850 crores saved"
-      }
+        property: "₹850 crores saved",
+      },
     },
     {
       id: 2,
@@ -635,30 +699,36 @@ This report demonstrates TropoScan's superior early warning capabilities in real
       timeSaved: "1.5 hours",
       severity: "Extremely Severe",
       status: "Successfully Predicted",
-      description: "Rapid intensification detected through advanced temperature analysis showing -78°C cloud tops and organized eye wall formation.",
-      impact: "Advanced warning helped Myanmar and Bangladesh prepare for landfall, reducing casualties by 60%",
+      description:
+        "Rapid intensification detected through advanced temperature analysis showing -78°C cloud tops and organized eye wall formation.",
+      impact:
+        "Advanced warning helped Myanmar and Bangladesh prepare for landfall, reducing casualties by 60%",
       images: [
         "https://eoimages.gsfc.nasa.gov/images/imagerecords/151000/151343/cyclonemocha_amo_2023134_lrg.png",
-        "https://e3.365dm.com/23/05/1600x900/skynews-storm-mocha-cyclone_6153233.jpg?20230512162928"
+        "https://e3.365dm.com/23/05/1600x900/skynews-storm-mocha-cyclone_6153233.jpg?20230512162928",
       ],
       technicalDetails: {
         windSpeed: "180-200 km/h",
         pressure: "950 hPa",
         temperature: "-78°C cloud tops",
-        confidence: "97%"
+        confidence: "97%",
       },
       timeline: [
-        { time: "12:00 PM", event: "Rapid intensification detected", type: "detection" },
+        {
+          time: "12:00 PM",
+          event: "Rapid intensification detected",
+          type: "detection",
+        },
         { time: "2:30 PM", event: "TropoScan critical alert", type: "warning" },
         { time: "4:00 PM", event: "Official warning issued", type: "official" },
-        { time: "6:00 PM", event: "Mass evacuation started", type: "action" }
+        { time: "6:00 PM", event: "Mass evacuation started", type: "action" },
       ],
       metrics: {
         accuracy: 97,
         falsePositives: 0,
         evacuated: 500000,
-        property: "₹1,200 crores saved"
-      }
+        property: "₹1,200 crores saved",
+      },
     },
     {
       id: 3,
@@ -670,52 +740,91 @@ This report demonstrates TropoScan's superior early warning capabilities in real
       timeSaved: "Prevented false alarm",
       severity: "Depression",
       status: "Correctly Identified",
-      description: "System showed moderate convection but lacked proper organization. Our model correctly classified as low-moderate risk, preventing unnecessary panic.",
-      impact: "Prevented false alarms and unnecessary evacuations, saving ₹200 crores in emergency costs",
+      description:
+        "System showed moderate convection but lacked proper organization. Our model correctly classified as low-moderate risk, preventing unnecessary panic.",
+      impact:
+        "Prevented false alarms and unnecessary evacuations, saving ₹200 crores in emergency costs",
       images: [
         "https://static.toiimg.com/thumb/msid-76153535,imgsize-394105,width-400,resizemode-4/76153535.jpg",
-        "https://ommcomnews.com/wp-content/uploads/2024/10/Cyclone-Alert.jpg"
+        "https://ommcomnews.com/wp-content/uploads/2024/10/Cyclone-Alert.jpg",
       ],
       technicalDetails: {
         windSpeed: "45-55 km/h",
         pressure: "1008 hPa",
         temperature: "-45°C cloud tops",
-        confidence: "89%"
+        confidence: "89%",
       },
       timeline: [
-        { time: "8:00 AM", event: "System monitoring began", type: "detection" },
+        {
+          time: "8:00 AM",
+          event: "System monitoring began",
+          type: "detection",
+        },
         { time: "10:00 AM", event: "Low risk assessment", type: "warning" },
-        { time: "2:00 PM", event: "System weakening confirmed", type: "official" },
-        { time: "6:00 PM", event: "All-clear status", type: "action" }
+        {
+          time: "2:00 PM",
+          event: "System weakening confirmed",
+          type: "official",
+        },
+        { time: "6:00 PM", event: "All-clear status", type: "action" },
       ],
       metrics: {
         accuracy: 89,
         falsePositives: 0,
         evacuated: 0,
-        property: "₹200 crores saved"
-      }
-    }
+        property: "₹200 crores saved",
+      },
+    },
   ];
 
   const overallStats = [
     { label: "Total Cases Analyzed", value: "47", color: "blue", icon: Eye },
-    { label: "Successful Predictions", value: "45/47", color: "green", icon: CheckCircle },
-    { label: "Average Early Warning", value: "2.3 hrs", color: "purple", icon: Clock },
-    { label: "Lives Potentially Saved", value: "680K+", color: "orange", icon: Users },
-    { label: "False Positive Rate", value: "0.02%", color: "red", icon: Shield },
-    { label: "Property Damage Prevented", value: "₹2,250 Cr", color: "emerald", icon: TrendingUp }
+    {
+      label: "Successful Predictions",
+      value: "45/47",
+      color: "green",
+      icon: CheckCircle,
+    },
+    {
+      label: "Average Early Warning",
+      value: "2.3 hrs",
+      color: "purple",
+      icon: Clock,
+    },
+    {
+      label: "Lives Potentially Saved",
+      value: "680K+",
+      color: "orange",
+      icon: Users,
+    },
+    {
+      label: "False Positive Rate",
+      value: "0.02%",
+      color: "red",
+      icon: Shield,
+    },
+    {
+      label: "Property Damage Prevented",
+      value: "₹2,250 Cr",
+      color: "emerald",
+      icon: TrendingUp,
+    },
   ];
 
   const SeverityIndicator = ({ severity }) => {
     const getColor = (sev) => {
-      switch(sev) {
-        case "Depression": return "bg-yellow-500";
-        case "Very Severe": return "bg-orange-500";
-        case "Extremely Severe": return "bg-red-500";
-        default: return "bg-gray-500";
+      switch (sev) {
+        case "Depression":
+          return "bg-yellow-500";
+        case "Very Severe":
+          return "bg-orange-500";
+        case "Extremely Severe":
+          return "bg-red-500";
+        default:
+          return "bg-gray-500";
       }
     };
-    
+
     return (
       <div className="flex items-center space-x-2">
         <div className={`w-3 h-3 rounded-full ${getColor(severity)}`}></div>
@@ -726,22 +835,31 @@ This report demonstrates TropoScan's superior early warning capabilities in real
 
   const MetricCard = ({ label, value, color, icon: Icon }) => {
     const getColorClasses = (color) => {
-      switch(color) {
-        case "blue": return "bg-blue-500/10 border-blue-500/30 text-blue-400";
-        case "green": return "bg-green-500/10 border-green-500/30 text-green-400";
-        case "purple": return "bg-purple-500/10 border-purple-500/30 text-purple-400";
-        case "orange": return "bg-orange-500/10 border-orange-500/30 text-orange-400";
-        case "red": return "bg-red-500/10 border-red-500/30 text-red-400";
-        case "emerald": return "bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
-        default: return "bg-gray-500/10 border-gray-500/30 text-gray-400";
+      switch (color) {
+        case "blue":
+          return "bg-blue-500/10 border-blue-500/30 text-blue-400";
+        case "green":
+          return "bg-green-500/10 border-green-500/30 text-green-400";
+        case "purple":
+          return "bg-purple-500/10 border-purple-500/30 text-purple-400";
+        case "orange":
+          return "bg-orange-500/10 border-orange-500/30 text-orange-400";
+        case "red":
+          return "bg-red-500/10 border-red-500/30 text-red-400";
+        case "emerald":
+          return "bg-emerald-500/10 border-emerald-500/30 text-emerald-400";
+        default:
+          return "bg-gray-500/10 border-gray-500/30 text-gray-400";
       }
     };
 
     const colorClasses = getColorClasses(color);
-    const [bgColor, borderColor, textColor] = colorClasses.split(' ');
+    const [bgColor, borderColor, textColor] = colorClasses.split(" ");
 
     return (
-      <Card className={`${bgColor} ${borderColor} hover:bg-opacity-20 transition-all duration-300`}>
+      <Card
+        className={`${bgColor} ${borderColor} hover:bg-opacity-20 transition-all duration-300`}
+      >
         <CardContent className="p-6 text-center">
           <Icon className={`w-8 h-8 ${textColor} mx-auto mb-3`} />
           <div className={`text-3xl font-bold ${textColor} mb-2`}>{value}</div>
@@ -793,16 +911,10 @@ This report demonstrates TropoScan's superior early warning capabilities in real
             Historical Case Studies
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Real-world validation demonstrating TropoScan's superior early detection capabilities 
-            and life-saving impact across critical weather events
+            Real-world validation demonstrating TropoScan's superior early
+            detection capabilities and life-saving impact across critical
+            weather events
           </p>
-        </div>
-
-        {/* Enhanced Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {overallStats.map((stat, index) => (
-            <MetricCard key={index} {...stat} />
-          ))}
         </div>
 
         {/* Performance Highlights */}
@@ -810,19 +922,31 @@ This report demonstrates TropoScan's superior early warning capabilities in real
           <CardContent className="p-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               <div>
-                <div className="text-4xl font-bold text-green-400 mb-2">98.7%</div>
+                <div className="text-4xl font-bold text-green-400 mb-2">
+                  98.7%
+                </div>
                 <div className="text-gray-200">Prediction Accuracy</div>
-                <div className="text-sm text-gray-400 mt-1">Industry leading performance</div>
+                <div className="text-sm text-gray-400 mt-1">
+                  Industry leading performance
+                </div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-blue-400 mb-2">0.02%</div>
+                <div className="text-4xl font-bold text-blue-400 mb-2">
+                  0.02%
+                </div>
                 <div className="text-gray-200">False Positive Rate</div>
-                <div className="text-sm text-gray-400 mt-1">Minimal false alarms</div>
+                <div className="text-sm text-gray-400 mt-1">
+                  Minimal false alarms
+                </div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-purple-400 mb-2">₹2,250Cr</div>
+                <div className="text-4xl font-bold text-purple-400 mb-2">
+                  ₹2,250Cr
+                </div>
                 <div className="text-gray-200">Economic Impact</div>
-                <div className="text-sm text-gray-400 mt-1">Damage prevented</div>
+                <div className="text-sm text-gray-400 mt-1">
+                  Damage prevented
+                </div>
               </div>
             </div>
           </CardContent>
@@ -831,7 +955,10 @@ This report demonstrates TropoScan's superior early warning capabilities in real
         {/* Case Studies */}
         <div className="space-y-8">
           {cases.map((case_study) => (
-            <Card key={case_study.id} className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-300">
+            <Card
+              key={case_study.id}
+              className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-300"
+            >
               <CardHeader>
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
                   <div>
@@ -856,13 +983,18 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                       <CheckCircle className="w-3 h-3 mr-1" />
                       {case_study.status}
                     </Badge>
-                    <Badge variant="outline" className="border-gray-600 text-gray-300">
-                      {case_study.timeSaved !== "N/A" ? `+${case_study.timeSaved}` : "Correct Analysis"}
+                    <Badge
+                      variant="outline"
+                      className="border-gray-600 text-gray-300"
+                    >
+                      {case_study.timeSaved !== "N/A"
+                        ? `+${case_study.timeSaved}`
+                        : "Correct Analysis"}
                     </Badge>
                   </div>
                 </div>
               </CardHeader>
-              
+
               <CardContent>
                 <div className="grid grid-cols-1 gap-8">
                   {/* Satellite Images */}
@@ -874,14 +1006,17 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {case_study.images.map((image, index) => (
-                          <div key={index} className="relative group overflow-hidden rounded-lg bg-gray-900/50 border border-gray-700">
-                            <img 
-                              src={image} 
+                          <div
+                            key={index}
+                            className="relative group overflow-hidden rounded-lg bg-gray-900/50 border border-gray-700"
+                          >
+                            <img
+                              src={image}
                               alt={`${case_study.name} - Image ${index + 1}`}
                               className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
-                                target.style.display = 'none';
+                                target.style.display = "none";
                               }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -903,12 +1038,18 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                   {/* Event Analysis and Technical Details */}
                   <div className="space-y-6">
                     <div>
-                      <h4 className="text-white font-semibold mb-3">Event Analysis</h4>
-                      <p className="text-gray-300 leading-relaxed">{case_study.description}</p>
+                      <h4 className="text-white font-semibold mb-3">
+                        Event Analysis
+                      </h4>
+                      <p className="text-gray-300 leading-relaxed">
+                        {case_study.description}
+                      </p>
                     </div>
 
                     <div>
-                      <h4 className="text-white font-semibold mb-3">Technical Metrics</h4>
+                      <h4 className="text-white font-semibold mb-3">
+                        Technical Metrics
+                      </h4>
                       <TechnicalMetrics data={case_study.technicalDetails} />
                     </div>
 
@@ -920,17 +1061,22 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                       <p className="text-gray-200 mb-4">{case_study.impact}</p>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <div className="text-2xl font-bold text-green-400">{case_study.metrics.accuracy}%</div>
+                          <div className="text-2xl font-bold text-green-400">
+                            {case_study.metrics.accuracy}%
+                          </div>
                           <div className="text-sm text-gray-300">Accuracy</div>
                         </div>
                         <div>
-                          <div className="text-2xl font-bold text-blue-400">{case_study.metrics.evacuated.toLocaleString()}</div>
-                          <div className="text-sm text-gray-300">People Evacuated</div>
+                          <div className="text-2xl font-bold text-blue-400">
+                            {case_study.metrics.evacuated.toLocaleString()}
+                          </div>
+                          <div className="text-sm text-gray-300">
+                            People Evacuated
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
                 </div>
               </CardContent>
             </Card>
@@ -948,14 +1094,15 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                 Proven Results in Critical Situations
               </h3>
               <p className="text-gray-300 text-lg mb-6 max-w-3xl mx-auto">
-                These case studies demonstrate TropoScan's superior ability to provide early warnings 
-                that save lives and reduce disaster impact. Our AI-powered detection consistently 
-                outperforms traditional meteorological methods by hours, not minutes.
+                These case studies demonstrate TropoScan's superior ability to
+                provide early warnings that save lives and reduce disaster
+                impact. Our AI-powered detection consistently outperforms
+                traditional meteorological methods by hours, not minutes.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button 
+              <Button
                 onClick={handleViewTechnicalDocs}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
               >
@@ -963,16 +1110,18 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                 View Technical Documentation
                 <ExternalLink className="w-4 h-4 ml-2" />
               </Button>
-              <Button 
+              <Button
                 onClick={handleDownloadReport}
                 disabled={isDownloading}
-                variant="outline" 
+                variant="outline"
                 className="border-gray-600 text-gray-300 hover:bg-gray-700 px-8 py-3 text-lg"
               >
                 <Download className="w-5 h-5 mr-2" />
-                {isDownloading ? 'Generating Report...' : 'Download Complete Report'}
+                {isDownloading
+                  ? "Generating Report..."
+                  : "Download Complete Report"}
               </Button>
-              <Button 
+              <Button
                 onClick={handleScheduleDemo}
                 className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 text-lg"
               >
@@ -989,9 +1138,11 @@ This report demonstrates TropoScan's superior early warning capabilities in real
             <div className="bg-gray-900 rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-700">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-white">Technical Documentation</h2>
-                  <Button 
-                    variant="ghost" 
+                  <h2 className="text-2xl font-bold text-white">
+                    Technical Documentation
+                  </h2>
+                  <Button
+                    variant="ghost"
                     onClick={() => setShowTechnicalDocs(false)}
                     className="text-gray-400 hover:text-white"
                   >
@@ -999,14 +1150,18 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                   </Button>
                 </div>
               </div>
-              
+
               <div className="p-6 space-y-6">
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">TropoScan AI Model Architecture</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    TropoScan AI Model Architecture
+                  </h3>
                   <div className="bg-gray-800 rounded-lg p-4 space-y-3">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-medium text-blue-400 mb-2">Input Processing</h4>
+                        <h4 className="font-medium text-blue-400 mb-2">
+                          Input Processing
+                        </h4>
                         <ul className="text-gray-300 text-sm space-y-1">
                           <li>• INSAT-3D IR imagery (10.8 μm channel)</li>
                           <li>• Multi-spectral satellite data fusion</li>
@@ -1015,7 +1170,9 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                         </ul>
                       </div>
                       <div>
-                        <h4 className="font-medium text-green-400 mb-2">AI Model Components</h4>
+                        <h4 className="font-medium text-green-400 mb-2">
+                          AI Model Components
+                        </h4>
                         <ul className="text-gray-300 text-sm space-y-1">
                           <li>• Convolutional Neural Network (CNN)</li>
                           <li>• Recurrent Neural Network (RNN)</li>
@@ -1028,25 +1185,39 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Detection Algorithms</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    Detection Algorithms
+                  </h3>
                   <div className="bg-gray-800 rounded-lg p-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <h4 className="font-medium text-purple-400 mb-2">Deep Convection Analysis</h4>
+                        <h4 className="font-medium text-purple-400 mb-2">
+                          Deep Convection Analysis
+                        </h4>
                         <p className="text-gray-300 text-sm">
-                          Identifies organized convective patterns using cloud top temperature thresholds (&lt; -65°C) and spatial clustering algorithms.
+                          Identifies organized convective patterns using cloud
+                          top temperature thresholds (&lt; -65°C) and spatial
+                          clustering algorithms.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-medium text-orange-400 mb-2">Spiral Pattern Recognition</h4>
+                        <h4 className="font-medium text-orange-400 mb-2">
+                          Spiral Pattern Recognition
+                        </h4>
                         <p className="text-gray-300 text-sm">
-                          Computer vision algorithms detect spiral formations and eye wall development using edge detection and pattern matching.
+                          Computer vision algorithms detect spiral formations
+                          and eye wall development using edge detection and
+                          pattern matching.
                         </p>
                       </div>
                       <div>
-                        <h4 className="font-medium text-red-400 mb-2">Intensity Prediction</h4>
+                        <h4 className="font-medium text-red-400 mb-2">
+                          Intensity Prediction
+                        </h4>
                         <p className="text-gray-300 text-sm">
-                          Machine learning models predict cyclone intensity based on environmental factors and historical development patterns.
+                          Machine learning models predict cyclone intensity
+                          based on environmental factors and historical
+                          development patterns.
                         </p>
                       </div>
                     </div>
@@ -1054,48 +1225,89 @@ This report demonstrates TropoScan's superior early warning capabilities in real
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">Performance Metrics</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    Performance Metrics
+                  </h3>
                   <div className="bg-gray-800 rounded-lg p-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-400">95.2%</div>
-                        <div className="text-sm text-gray-300">Accuracy Rate</div>
+                        <div className="text-2xl font-bold text-green-400">
+                          95.2%
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          Accuracy Rate
+                        </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-400">2.1h</div>
-                        <div className="text-sm text-gray-300">Avg Early Warning</div>
+                        <div className="text-2xl font-bold text-blue-400">
+                          2.1h
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          Avg Early Warning
+                        </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-400">92.8%</div>
-                        <div className="text-sm text-gray-300">Success Rate</div>
+                        <div className="text-2xl font-bold text-purple-400">
+                          92.8%
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          Success Rate
+                        </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-400">2.1%</div>
-                        <div className="text-sm text-gray-300">False Positives</div>
+                        <div className="text-2xl font-bold text-orange-400">
+                          2.1%
+                        </div>
+                        <div className="text-sm text-gray-300">
+                          False Positives
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-4">API Integration</h3>
+                  <h3 className="text-xl font-semibold text-white mb-4">
+                    API Integration
+                  </h3>
                   <div className="bg-gray-800 rounded-lg p-4">
                     <div className="space-y-3">
                       <div>
-                        <h4 className="font-medium text-yellow-400 mb-2">Real-time Endpoints</h4>
+                        <h4 className="font-medium text-yellow-400 mb-2">
+                          Real-time Endpoints
+                        </h4>
                         <div className="bg-gray-900 rounded p-3 font-mono text-sm">
-                          <div className="text-green-400">GET /api/v1/cyclone/detect</div>
-                          <div className="text-blue-400">GET /api/v1/cyclone/forecast</div>
-                          <div className="text-purple-400">POST /api/v1/cyclone/analyze</div>
+                          <div className="text-green-400">
+                            GET /api/v1/cyclone/detect
+                          </div>
+                          <div className="text-blue-400">
+                            GET /api/v1/cyclone/forecast
+                          </div>
+                          <div className="text-purple-400">
+                            POST /api/v1/cyclone/analyze
+                          </div>
                         </div>
                       </div>
                       <div>
-                        <h4 className="font-medium text-yellow-400 mb-2">Data Sources</h4>
+                        <h4 className="font-medium text-yellow-400 mb-2">
+                          Data Sources
+                        </h4>
                         <ul className="text-gray-300 text-sm space-y-1">
-                          <li>• Indian Space Research Organisation (ISRO) satellites</li>
-                          <li>• National Oceanic and Atmospheric Administration (NOAA)</li>
-                          <li>• European Centre for Medium-Range Weather Forecasts (ECMWF)</li>
-                          <li>• India Meteorological Department (IMD) stations</li>
+                          <li>
+                            • Indian Space Research Organisation (ISRO)
+                            satellites
+                          </li>
+                          <li>
+                            • National Oceanic and Atmospheric Administration
+                            (NOAA)
+                          </li>
+                          <li>
+                            • European Centre for Medium-Range Weather Forecasts
+                            (ECMWF)
+                          </li>
+                          <li>
+                            • India Meteorological Department (IMD) stations
+                          </li>
                         </ul>
                       </div>
                     </div>
