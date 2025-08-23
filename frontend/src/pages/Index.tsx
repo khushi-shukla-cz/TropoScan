@@ -1,5 +1,22 @@
 import { useState, useEffect } from "react";
-import { Cloud, Satellite, AlertTriangle, TrendingUp, Eye, Download, MapPin, Clock, Thermometer, Sun, Moon, Activity, Zap, Bell, FileText, BarChart3 } from "lucide-react";
+import {
+  Cloud,
+  Satellite,
+  AlertTriangle,
+  TrendingUp,
+  Eye,
+  Download,
+  MapPin,
+  Clock,
+  Thermometer,
+  Sun,
+  Moon,
+  Activity,
+  Zap,
+  Bell,
+  FileText,
+  BarChart3,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +31,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { toast } = useToast();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -22,11 +40,11 @@ const Index = () => {
   // Sync activeTab with URL parameters
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const tab = params.get('tab');
-    if (tab && ['home', 'detection', 'cases'].includes(tab)) {
+    const tab = params.get("tab");
+    if (tab && ["home", "detection", "cases"].includes(tab)) {
       setActiveTab(tab);
     } else {
-      setActiveTab('home');
+      setActiveTab("home");
     }
   }, [location.search]);
 
@@ -39,7 +57,7 @@ const Index = () => {
             <div className="flex items-center space-x-2 animate-fade-in">
               <Satellite className="h-8 w-8 text-blue-400" />
               <h1 className="text-2xl font-bold text-white">TropoScan</h1>
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant="secondary" className="ml-2 hidden sm:inline-flex">
                 AI-Powered
               </Badge>
             </div>
@@ -56,7 +74,40 @@ const Index = () => {
                   <Sun className="h-5 w-5" />
                 )}
               </Button>
-              <div className="flex space-x-2">
+
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden text-white hover:bg-white/10"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  {isMobileMenuOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </Button>
+
+              {/* Desktop Navigation */}
+              <div className="hidden lg:flex nav-buttons space-x-2">
                 <button
                   onClick={() => setActiveTab("home")}
                   className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
@@ -68,7 +119,7 @@ const Index = () => {
                   <Cloud className="h-4 w-4" />
                   <span>Home</span>
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab("detection")}
                   className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
@@ -80,7 +131,7 @@ const Index = () => {
                   <Eye className="h-4 w-4" />
                   <span>Detection</span>
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab("cases")}
                   className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 ${
@@ -92,7 +143,7 @@ const Index = () => {
                   <FileText className="h-4 w-4" />
                   <span>Cases</span>
                 </button>
-                
+
                 <button
                   onClick={() => navigate("/emergency")}
                   className="px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
@@ -131,6 +182,108 @@ const Index = () => {
               </div>
             </div>
           </div>
+
+          {/* Mobile Navigation Menu */}
+          <div
+            className={`lg:hidden ${
+              isMobileMenuOpen ? "block" : "hidden"
+            } mt-4 pb-4 animate-fade-in`}
+          >
+            <div className="flex flex-col space-y-2">
+              <button
+                onClick={() => {
+                  setActiveTab("home");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                  activeTab === "home"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Cloud className="h-5 w-5" />
+                <span>Home</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab("detection");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                  activeTab === "detection"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Eye className="h-5 w-5" />
+                <span>Detection</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setActiveTab("cases");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                  activeTab === "cases"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <FileText className="h-5 w-5" />
+                <span>Cases</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/emergency");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+              >
+                <AlertTriangle className="h-5 w-5" />
+                <span>Emergency</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/CycloneSimulator");
+                  setIsMobileMenuOpen(false);
+                }}
+                className={`px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                  location.pathname === "/CycloneSimulator"
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-300 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                <Activity className="h-5 w-5" />
+                <span>Simulator</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/trending");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+              >
+                <TrendingUp className="h-5 w-5" />
+                <span>Trends</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate("/notifications");
+                  setIsMobileMenuOpen(false);
+                }}
+                className="px-4 py-3 rounded-lg transition-all duration-300 flex items-center space-x-2 text-gray-300 hover:text-white hover:bg-white/10"
+              >
+                <Bell className="h-5 w-5" />
+                <span>Alerts</span>
+              </button>
+            </div>
+          </div>
         </div>
       </nav>
 
@@ -140,11 +293,11 @@ const Index = () => {
           {/* Hero Section */}
           <section className="container mx-auto px-4 py-16">
             <div className="text-center mb-16 animate-scale-in">
-              <h2 className="text-5xl font-bold text-white mb-6 animate-fade-in delay-100">
+              <h2 className="hero-title text-5xl font-bold text-white mb-6 animate-fade-in delay-100">
                 Early Warning System for{" "}
                 <span className="text-blue-400">Tropical Storms</span>
               </h2>
-              <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in delay-200">
+              <p className="hero-description text-xl text-gray-300 mb-8 max-w-3xl mx-auto animate-fade-in delay-200">
                 Using AI and INSAT satellite data to detect dangerous cloud
                 clusters before they develop into cyclones.
               </p>
@@ -170,7 +323,7 @@ const Index = () => {
             </div>
 
             {/* How It Works */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+            <div className="card-grid grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
               {[
                 {
                   icon: Satellite,
