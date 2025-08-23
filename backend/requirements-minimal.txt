@@ -1,0 +1,5 @@
+# Minimal requirements for TropoScan backend
+Flask==3.0.0
+Flask-CORS==4.0.0
+Pillow==10.3.0
+gunicorn==22.0.0

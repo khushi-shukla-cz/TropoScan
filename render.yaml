@@ -1,0 +1,32 @@
+services:
+  # Backend API
+  - type: web
+    name: troposcam-backend
+    env: python
+    runtime: python-3.11.9
+    buildCommand: "python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt"
+    startCommand: "python app.py"
+    rootDir: backend
+    plan: free
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: PYTHONPATH
+        value: "/opt/render/project/src"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+
+  # Frontend Static Site
+  - type: static
+    name: troposcam-frontend
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "./dist"
+    rootDir: frontend
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://troposcam-backend.onrender.com
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=1024"
